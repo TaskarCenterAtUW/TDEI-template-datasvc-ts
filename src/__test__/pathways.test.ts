@@ -18,13 +18,13 @@ describe("POST /api/v1/gtfspathways", () => {
                 responseObj = result;
             })
         };
-
+        let next = jest.fn();
         const list: GtfsPathwaysDTO[] = [new GtfsPathwaysDTO()]
         const spy = jest
             .spyOn(gtfsPathwaysService, "getAllGtfsPathway")
             .mockResolvedValueOnce(list);
 
-        await gtfsPathwaysController.getAllGtfsPathway(mockRequest, mockResponse as Response);
+        await gtfsPathwaysController.getAllGtfsPathway(mockRequest, mockResponse as Response, next);
         expect(responseObj).toEqual(list);
         expect(spy).toHaveBeenCalledTimes(1);
         spy.mockRestore();

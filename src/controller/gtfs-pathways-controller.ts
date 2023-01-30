@@ -1,10 +1,13 @@
-import { Request } from "express";
+import { NextFunction, Request } from "express";
 import express from "express";
 import { IController } from "./interface/IController";
 import { PathwaysQueryParams } from "../model/gtfs-pathways-get-query-params";
 import { FileEntity } from "nodets-ms-core/lib/core/storage";
 import gtfsPathwaysService from "../service/gtfs-pathways-service";
-import { BadRequest } from "../model/http/http-responses";
+import validationMiddleware from "../middleware/dto-validation-middleware";
+import { PathwayVersions } from "../database/entity/pathways-version-entity";
+import HttpException from "../exceptions/http/http-base-exception";
+import { DuplicateException } from "../exceptions/http/http-exceptions";
 
 class GtfsPathwaysController implements IController {
     public path = '/api/v1/gtfspathways';
@@ -16,19 +19,25 @@ class GtfsPathwaysController implements IController {
     public intializeRoutes() {
         this.router.get(this.path, this.getAllGtfsPathway);
         this.router.get(`${this.path}/:id`, this.getGtfsPathwayById);
-        this.router.post(this.path, this.createAGtfsPathway);
+        this.router.post(this.path, validationMiddleware(PathwayVersions), this.createGtfsPathway);
     }
 
-    getAllGtfsPathway = async (request: Request, response: express.Response) => {
-        var params: PathwaysQueryParams = new PathwaysQueryParams(JSON.parse(JSON.stringify(request.query)));
+    getAllGtfsPathway = async (request: Request, response: express.Response, next: NextFunction) => {
 
-        // load gtfsPathways
-        const gtfsPathways = await gtfsPathwaysService.getAllGtfsPathway(params);
-        // return loaded gtfsPathways
-        response.send(gtfsPathways);
+        try {
+            var params: PathwaysQueryParams = new PathwaysQueryParams(JSON.parse(JSON.stringify(request.query)));
+
+            // load gtfsPathways
+            const gtfsPathways = await gtfsPathwaysService.getAllGtfsPathway(params);
+            // return loaded gtfsPathways
+            response.send(gtfsPathways);
+        } catch (error) {
+            console.log(error);
+            next(new HttpException(500, "Error while fetching the pathways information"));
+        }
     }
 
-    getGtfsPathwayById = async (request: Request, response: express.Response) => {
+    getGtfsPathwayById = async (request: Request, response: express.Response, next: NextFunction) => {
 
         try {
             // load a gtfsPathway by a given gtfsPathway id
@@ -41,22 +50,26 @@ class GtfsPathwaysController implements IController {
         } catch (error) {
             console.log('Error while getting the file stream');
             console.log(error);
-            BadRequest(response);
+            next(new HttpException(500, "Error while getting the file stream"));
         }
     }
 
-    createAGtfsPathway = async (request: Request, response: express.Response) => {
-
-        var newGtfsPathway = await gtfsPathwaysService.createAGtfsPathway(request.body).catch((error: any) => {
+    createGtfsPathway = async (request: Request, response: express.Response, next: NextFunction) => {
+        try {
+            var newGtfsPathway = await gtfsPathwaysService.createGtfsPathway(PathwayVersions.from(request.body))
+                .catch((error: any) => {
+                    if (error instanceof DuplicateException) {
+                        throw error;
+                    }
+                    throw new HttpException(500, 'Error saving the pathways version');
+                });
+            // return saved gtfsPathway back
+            response.send(newGtfsPathway);
+        } catch (error) {
             console.log('Error saving the pathways version');
             console.log(error);
-            // if gtfsPathway was not found return 404 to the client
-            response.status(500);
-            response.end();
-            return;
-        });
-        // return saved gtfsPathway back
-        response.send(newGtfsPathway);
+            next(error);
+        }
     }
 }
 

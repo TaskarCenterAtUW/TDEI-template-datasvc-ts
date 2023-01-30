@@ -1,8 +1,6 @@
 import { PathwayVersions } from "../../database/entity/pathways-version-entity";
 import { GtfsPathwaysUploadModel } from "../../model/gtfs-pathways-upload-model";
-import { Utility } from "../../utility/utility";
 import gtfsPathwaysService from "../gtfs-pathways-service";
-import { IGtfsPathwaysService } from "../gtfs-pathways-service-interface";
 import { IEventBusServiceInterface } from "./interface/event-bus-service-interface";
 import { validate } from 'class-validator';
 import { AzureQueueConfig } from "nodets-ms-core/lib/core/queue/providers/azure-queue-config";
@@ -31,13 +29,13 @@ class EventBusService implements IEventBusServiceInterface {
             var pathwayVersions: PathwayVersions = new PathwayVersions(gtfsPathwaysUploadModel);
             pathwayVersions.uploaded_by = gtfsPathwaysUploadModel.user_id;
             console.log(`Received message: ${JSON.stringify(gtfsPathwaysUploadModel)}`);
-            //Utility.copy<PathwayVersions>(pathwayVersions, gtfsPathwaysUploadModel);
+
             validate(pathwayVersions).then(errors => {
                 // errors is an array of validation errors
                 if (errors.length > 0) {
                     console.log('Upload pathways file metadata information failed validation. errors: ', errors);
                 } else {
-                    gtfsPathwaysService.createAGtfsPathway(pathwayVersions).catch((error: any) => {
+                    gtfsPathwaysService.createGtfsPathway(pathwayVersions).catch((error: any) => {
                         console.log('Error saving the pathways version');
                         console.log(error);
                     });;

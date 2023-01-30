@@ -1,3 +1,4 @@
+import { DynamicQueryObject, SqlORder } from "../database/dynamic-query-object";
 import { Utility } from "../utility/utility";
 
 export class PathwaysQueryParams {
@@ -14,38 +15,28 @@ export class PathwaysQueryParams {
         Object.assign(this, init);
     }
 
-    toSqlStr() {
-        let select: string = "Select * from pathway_versions";
-        let where: string = "Where";
-
-        //Set defaults if not provided
-        if (this.page_no == undefined) this.page_no = 1;
-        if (this.page_size == undefined) this.page_size = 10;
-        let skip = this.page_no == 1 ? 0 : (this.page_no - 1) * this.page_size;
-        let take = this.page_size > 50 ? 50 : this.page_size;
-
-
+    /**
+     * Builds the parameterized sql query.
+     * @returns DynamicQueryObject
+     */
+    getQueryObject() {
+        let queryObject: DynamicQueryObject = new DynamicQueryObject();
+        queryObject.buildSelect("pathway_versions", ["*"]);
+        queryObject.buildPagination(this.page_no, this.page_size);
+        queryObject.buildOrder("updated_date", SqlORder.DESC);
+        //Add conditions
         if (this.pathways_schema_version)
-            where = where.concat(" ", "pathways_schema_version", "='", this.pathways_schema_version, "' ", " and");
+            queryObject.condition(` pathways_schema_version = $${queryObject.paramCouter++} `, this.pathways_schema_version);
         if (this.tdei_org_id)
-            where = where.concat(" ", "tdei_org_id", "='", this.tdei_org_id, "' ", " and");
+            queryObject.condition(` tdei_org_id = $${queryObject.paramCouter++} `, this.tdei_org_id);
         if (this.tdei_record_id)
-            where = where.concat(" ", "tdei_record_id", "='", this.tdei_record_id, "' ", " and");
+            queryObject.condition(` tdei_record_id = $${queryObject.paramCouter++} `, this.tdei_record_id);
         if (this.tdei_station_id)
-            where = where.concat(" ", "tdei_station_id", "='", this.tdei_station_id, "' ", " and");
+            queryObject.condition(` tdei_station_id = $${queryObject.paramCouter++} `, this.tdei_station_id);
         if (this.date_time && Utility.dateIsValid(this.date_time))
-            where = where.concat(" ", "valid_to", ">'", this.date_time, "' ");
-        //Check if no where clouse specified, then remove where clouse
-        if (where == "Where")
-            where = "";
+            queryObject.condition(` valid_to > $${queryObject.paramCouter++} `, this.date_time);
 
-        where = this.removeLastWord(where, 'and');
-
-        where = where.concat(" ", "ORDER BY", " ", "updated_date DESC", " ");
-        where = where.concat(" ", "LIMIT", " ", take.toString(), " ");
-        where = where.concat(" ", "OFFSET", " ", skip.toString(), " ");
-
-        return select.concat(" ", where);
+        return queryObject;
     }
 
     removeLastWord(str: string, wordToRemove: string) {
