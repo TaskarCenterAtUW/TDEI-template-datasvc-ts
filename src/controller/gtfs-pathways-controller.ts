@@ -56,7 +56,7 @@ class GtfsPathwaysController implements IController {
 
     createGtfsPathway = async (request: Request, response: express.Response, next: NextFunction) => {
         try {
-            var newGtfsPathway = await gtfsPathwaysService.createGtfsPathway(request.body)
+            var newGtfsPathway = await gtfsPathwaysService.createGtfsPathway(PathwayVersions.from(request.body))
                 .catch((error: any) => {
                     if (error instanceof DuplicateException) {
                         throw error;
