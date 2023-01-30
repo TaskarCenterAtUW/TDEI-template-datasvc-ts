@@ -8,7 +8,6 @@ import HttpException from "../exceptions/http/http-base-exception";
 import { DuplicateException } from "../exceptions/http/http-exceptions";
 import { GtfsPathwaysDTO } from "../model/gtfs-pathways-dto";
 import { PathwaysQueryParams } from "../model/gtfs-pathways-get-query-params";
-import { Utility } from "../utility/utility";
 import { IGtfsPathwaysService } from "./gtfs-pathways-service-interface";
 
 class GtfsPathwaysService implements IGtfsPathwaysService {
@@ -29,7 +28,7 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
         let list: GtfsPathwaysDTO[] = [];
         result.rows.forEach(x => {
 
-            let pathway: GtfsPathwaysDTO = Utility.copy<GtfsPathwaysDTO>(new GtfsPathwaysDTO(), x);;
+            let pathway: GtfsPathwaysDTO = GtfsPathwaysDTO.from(x);;
             list.push(pathway);
         })
         return Promise.resolve(list);
@@ -55,25 +54,10 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
     async createGtfsPathway(pathwayInfo: PathwayVersions): Promise<GtfsPathwaysDTO> {
         try {
             pathwayInfo.file_upload_path = decodeURIComponent(pathwayInfo.file_upload_path!);
-            const queryObject = {
-                text: `INSERT INTO public.pathway_versions(tdei_record_id, 
-                    confidence_level, 
-                    tdei_org_id, 
-                    tdei_station_id, 
-                    file_upload_path, 
-                    uploaded_by,
-                    collected_by, 
-                    collection_date, 
-                    collection_method, valid_from, valid_to, data_source,
-                    pathways_schema_version)
-                    VALUES ($1,0,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`.replace(/\n/g, ""),
-                values: [pathwayInfo.tdei_record_id, pathwayInfo.tdei_org_id, pathwayInfo.tdei_station_id, pathwayInfo.file_upload_path, pathwayInfo.uploaded_by
-                    , pathwayInfo.collected_by, pathwayInfo.collection_date, pathwayInfo.collection_method, pathwayInfo.valid_from, pathwayInfo.valid_to, pathwayInfo.data_source, pathwayInfo.pathways_schema_version],
-            }
 
-            let result = await dbClient.query(queryObject);
+            await dbClient.query(pathwayInfo.getInsertQuery());
 
-            let pathway: GtfsPathwaysDTO = Utility.copy<GtfsPathwaysDTO>(new GtfsPathwaysDTO(), pathwayInfo);
+            let pathway: GtfsPathwaysDTO = GtfsPathwaysDTO.from(pathwayInfo);
 
             return Promise.resolve(pathway);
         } catch (error) {
@@ -89,5 +73,5 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
     }
 }
 
-const gtfsPathwaysService = new GtfsPathwaysService();
+const gtfsPathwaysService: IGtfsPathwaysService = new GtfsPathwaysService();
 export default gtfsPathwaysService;

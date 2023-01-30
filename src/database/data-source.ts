@@ -3,7 +3,7 @@ import { PostgresError } from '../constants/pg-error-constants';
 import { environment } from '../environment/environment';
 import UniqueKeyDbException, { ForeignKeyDbException } from '../exceptions/db/database-exceptions';
 
-class PostgresDb {
+class DataSource {
     private pool: Pool;
 
     constructor() {
@@ -71,5 +71,5 @@ class PostgresDb {
     }
 }
 
-const dbClient = new PostgresDb();
+const dbClient = new DataSource();
 export default dbClient;
