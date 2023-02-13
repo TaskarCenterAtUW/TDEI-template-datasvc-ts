@@ -8,7 +8,8 @@ import HttpException from "../exceptions/http/http-base-exception";
 import { DuplicateException } from "../exceptions/http/http-exceptions";
 import { GtfsPathwaysDTO } from "../model/gtfs-pathways-dto";
 import { PathwaysQueryParams } from "../model/gtfs-pathways-get-query-params";
-import { IGtfsPathwaysService } from "./gtfs-pathways-service-interface";
+import { PolygonDto } from "../model/polygon-model";
+import { IGtfsPathwaysService } from "./interface/gtfs-pathways-service-interface";
 
 class GtfsPathwaysService implements IGtfsPathwaysService {
     constructor() { }
@@ -28,7 +29,9 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
         let list: GtfsPathwaysDTO[] = [];
         result.rows.forEach(x => {
 
-            let pathway: GtfsPathwaysDTO = GtfsPathwaysDTO.from(x);;
+            let pathway: GtfsPathwaysDTO = GtfsPathwaysDTO.from(x);
+            if (pathway.polygon)
+                pathway.polygon = new PolygonDto({ coordinates: JSON.parse(x.polygon2).coordinates });
             list.push(pathway);
         })
         return Promise.resolve(list);

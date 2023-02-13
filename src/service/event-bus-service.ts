@@ -1,11 +1,12 @@
-import { PathwayVersions } from "../../database/entity/pathways-version-entity";
-import { GtfsPathwaysUploadModel } from "../../model/gtfs-pathways-upload-model";
-import gtfsPathwaysService from "../gtfs-pathways-service";
+import { PathwayVersions } from "../database/entity/pathways-version-entity";
+import gtfsPathwaysService from "./gtfs-pathways-service";
 import { IEventBusServiceInterface } from "./interface/event-bus-service-interface";
 import { validate } from 'class-validator';
 import { AzureQueueConfig } from "nodets-ms-core/lib/core/queue/providers/azure-queue-config";
-import { environment } from "../../environment/environment";
+import { environment } from "../environment/environment";
 import { Core } from "nodets-ms-core";
+import { Polygon } from "../model/polygon-model";
+import { QueueMessageContent } from "../model/queue-message-model";
 
 class EventBusService implements IEventBusServiceInterface {
     private queueConfig: AzureQueueConfig;
@@ -20,15 +21,23 @@ class EventBusService implements IEventBusServiceInterface {
     // function to handle messages
     private processUpload = async (messageReceived: any) => {
         try {
-            if (!messageReceived.data || !messageReceived.data.is_valid) {
-                console.log("Not valid information received :", messageReceived);
+            var queueMessage = QueueMessageContent.from(messageReceived.data);
+            if (!queueMessage.response.success && !queueMessage.meta.isValid) {
+                console.error("Failed workflow request received:", messageReceived);
                 return;
             }
 
-            var gtfsPathwaysUploadModel = messageReceived.data as GtfsPathwaysUploadModel;
-            var pathwayVersions: PathwayVersions = new PathwayVersions(gtfsPathwaysUploadModel);
-            pathwayVersions.uploaded_by = gtfsPathwaysUploadModel.user_id;
-            console.log(`Received message: ${JSON.stringify(gtfsPathwaysUploadModel)}`);
+            if (!await queueMessage.hasPermission(["tdei-admin", "poc", "pathways_data_generator"])) {
+                return;
+            }
+
+            var pathwayVersions: PathwayVersions = PathwayVersions.from(queueMessage.request);
+            pathwayVersions.tdei_record_id = queueMessage.tdeiRecordId;
+            pathwayVersions.uploaded_by = queueMessage.userId;
+            pathwayVersions.file_upload_path = queueMessage.meta.file_upload_path;
+            //This line will instantiate the polygon class and set defult class values
+            pathwayVersions.polygon = new Polygon({ coordinates: pathwayVersions.polygon.coordinates });
+            console.info(`Received message: ${messageReceived.data}`);
 
             validate(pathwayVersions).then(errors => {
                 // errors is an array of validation errors
@@ -36,20 +45,20 @@ class EventBusService implements IEventBusServiceInterface {
                     console.log('Upload pathways file metadata information failed validation. errors: ', errors);
                 } else {
                     gtfsPathwaysService.createGtfsPathway(pathwayVersions).catch((error: any) => {
-                        console.log('Error saving the pathways version');
-                        console.log(error);
+                        console.error('Error saving the pathways version');
+                        console.error(error);
                     });;
                 }
             });
         } catch (error) {
-            console.log("Error processing the upload message : error ", error, "message: ", messageReceived);
+            console.error("Error processing the upload message : error ", error, "message: ", messageReceived);
         }
     };
 
 
     // function to handle any errors
     private processUploadError = async (error: any) => {
-        console.log(error);
+        console.error(error);
     };
 
     subscribeUpload(): void {

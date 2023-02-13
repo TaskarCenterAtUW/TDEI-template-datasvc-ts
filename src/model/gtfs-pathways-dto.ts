@@ -1,4 +1,5 @@
 import { AbstractDomainEntity, Prop } from "nodets-ms-core/lib/models";
+import { PolygonDto } from "./polygon-model";
 
 export class GtfsPathwaysDTO extends AbstractDomainEntity {
     @Prop()
@@ -21,4 +22,6 @@ export class GtfsPathwaysDTO extends AbstractDomainEntity {
     data_source: string = "";
     @Prop()
     pathways_schema_version: string = "";
+    @Prop()
+    polygon: PolygonDto | undefined;
 }
