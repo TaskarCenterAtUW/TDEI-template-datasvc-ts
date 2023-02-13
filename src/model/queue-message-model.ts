@@ -1,12 +1,8 @@
 import { IsNotEmpty } from "class-validator";
 import { AbstractDomainEntity, Prop } from "nodets-ms-core/lib/models";
-import config from 'config';
-import fetch, { Response } from "node-fetch";
 import { environment } from "../environment/environment";
 import { Core } from "nodets-ms-core";
 import { PermissionRequest } from "nodets-ms-core/lib/core/auth/model/permission_request";
-
-const permissionUrl: string = config.get('url.permission');
 
 export class QueueMessageContent extends AbstractDomainEntity {
     @Prop()
