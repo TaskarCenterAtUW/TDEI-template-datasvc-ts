@@ -8,6 +8,7 @@ import validationMiddleware from "../middleware/dto-validation-middleware";
 import { PathwayVersions } from "../database/entity/pathways-version-entity";
 import HttpException from "../exceptions/http/http-base-exception";
 import { DuplicateException } from "../exceptions/http/http-exceptions";
+import { validate, ValidationError } from "class-validator";
 
 class GtfsPathwaysController implements IController {
     public path = '/api/v1/gtfspathways';
@@ -56,15 +57,25 @@ class GtfsPathwaysController implements IController {
 
     createGtfsPathway = async (request: Request, response: express.Response, next: NextFunction) => {
         try {
-            var newGtfsPathway = await gtfsPathwaysService.createGtfsPathway(PathwayVersions.from(request.body))
-                .catch((error: any) => {
-                    if (error instanceof DuplicateException) {
-                        throw error;
-                    }
-                    throw new HttpException(500, 'Error saving the pathways version');
-                });
-            // return saved gtfsPathway back
-            response.send(newGtfsPathway);
+            let pathways = PathwayVersions.from(request.body);
+
+            validate(pathways).then(async errors => {
+                // errors is an array of validation errors
+                if (errors.length > 0) {
+                    console.error('Upload pathways file metadata information failed validation. errors: ', errors);
+                    const message = errors.map((error: ValidationError) => Object.values(<any>error.constraints)).join(', ');
+                    next(new HttpException(500, 'Input validation failed with below reasons : \n' + message));
+                } else {
+                    var newGtfsPathways = await gtfsPathwaysService.createGtfsPathway(pathways)
+                        .catch((error: any) => {
+                            if (error instanceof DuplicateException) {
+                                throw error;
+                            }
+                            next(new HttpException(500, 'Error saving the Pathways version'));
+                        });
+                    response.send(newGtfsPathways);
+                }
+            });
         } catch (error) {
             console.log('Error saving the pathways version');
             console.log(error);
