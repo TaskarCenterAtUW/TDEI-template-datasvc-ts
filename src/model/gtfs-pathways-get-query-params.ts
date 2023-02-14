@@ -52,6 +52,8 @@ export class PathwaysQueryParams {
         if (this.bbox && this.bbox.length > 0 && this.bbox.length == 4) {
             queryObject.condition(`polygon && ST_MakeEnvelope($${queryObject.paramCouter++},$${queryObject.paramCouter++},$${queryObject.paramCouter++},$${queryObject.paramCouter++}, 4326)`,
                 this.bbox);
+        } else if (this.bbox.length > 0 && this.bbox.length != 4) {
+            console.debug("Skipping bbox filter as bounding box constraints not satisfied.");
         }
         return queryObject;
     }

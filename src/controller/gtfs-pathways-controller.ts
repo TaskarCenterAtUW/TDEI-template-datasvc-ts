@@ -33,7 +33,7 @@ class GtfsPathwaysController implements IController {
             // return loaded gtfsPathways
             response.send(gtfsPathways);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             next(new HttpException(500, "Error while fetching the pathways information"));
         }
     }
@@ -49,8 +49,10 @@ class GtfsPathwaysController implements IController {
             response.status(200);
             (await fileEntity.getStream()).pipe(response);
         } catch (error) {
-            console.log('Error while getting the file stream');
-            console.log(error);
+            console.error('Error while getting the file stream');
+            console.error(error);
+            if (error instanceof HttpException)
+                throw next(error);
             next(new HttpException(500, "Error while getting the file stream"));
         }
     }
@@ -77,8 +79,8 @@ class GtfsPathwaysController implements IController {
                 }
             });
         } catch (error) {
-            console.log('Error saving the pathways version');
-            console.log(error);
+            console.error('Error saving the pathways version');
+            console.error(error);
             next(error);
         }
     }
