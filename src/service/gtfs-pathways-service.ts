@@ -46,7 +46,7 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
 
         let result = await dbClient.query(query);
 
-        if (result.rows.length == 0) throw new HttpException(400, "Record not found");
+        if (result.rows.length == 0) throw new HttpException(404, "Record not found");
 
         const storageClient = Core.getStorageClient();
         if (storageClient == null) throw console.error("Storage not configured");
