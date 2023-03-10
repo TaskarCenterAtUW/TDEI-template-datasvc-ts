@@ -58,7 +58,14 @@ class EventBusService implements IEventBusServiceInterface {
                     console.error('Upload flex file metadata information failed validation. errors: ', errors);
                     throw Error(message);
                 } else {
-                    gtfsPathwaysService.createGtfsPathway(pathwayVersions).catch((error: any) => {
+                    gtfsPathwaysService.createGtfsPathway(pathwayVersions).then((res) => {
+                        this.publish(messageReceived,
+                            {
+                                success: true,
+                                message: 'GTFS Pathways request processed successfully !'
+                            });
+                        return Promise.resolve();
+                    }).catch((error: any) => {
                         console.error('Error saving the pathways version', error);
                         this.publish(messageReceived,
                             {
@@ -67,12 +74,6 @@ class EventBusService implements IEventBusServiceInterface {
                             });
                         return Promise.resolve();
                     });
-                    this.publish(messageReceived,
-                        {
-                            success: true,
-                            message: 'GTFS Pathways request processed successfully !'
-                        });
-                    return Promise.resolve();
                 }
             });
         } catch (error) {

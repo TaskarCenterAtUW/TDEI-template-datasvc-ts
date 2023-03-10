@@ -14,14 +14,16 @@ export const environment = {
         dataServiceTopic: process.env.DATASVC_TOPIC
     },
     postgres: {
-        server_username: process.env.PATHWAYS_SERVER_USER,
-        server_host: process.env.POSTGRES_SERVER_HOST,
-        server_password: process.env.PATHWAYS_SERVER_PASSWORD,
-        pathways_database: process.env.PATHWAYS_DB,
-        tdei_database: process.env.TDEI_DB,
+        server_username: process.env.POSTGRES_USER,
+        server_host: process.env.POSTGRES_HOST,
+        server_password: process.env.POSTGRES_PASSWORD,
+        pathways_database: process.env.POSTGRES_DB,
         ssl: Boolean(process.env.SSL),
-        server_port: parseInt(process.env.POSTGRES_SERVER_PORT ?? "5432"),
+        server_port: parseInt(process.env.POSTGRES_PORT ?? "5432"),
     },
     appPort: parseInt(process.env.APPLICATION_PORT ?? "8080"),
-    authPermissionUrl: process.env.AUTH_PERMISSION_URL
+    authPermissionUrl: process.env.AUTH_PERMISSION_URL,
+    stationUrl: process.env.STATION_URL,
+    secretGenerateUrl: process.env.AUTH_SECRET_TOKEN_GENERATE_URL,
+    secretVerifyUrl: process.env.AUTH_SECRET_TOKEN_VERIFY_URL
 }

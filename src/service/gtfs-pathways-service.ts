@@ -10,7 +10,10 @@ import { GtfsPathwaysDTO } from "../model/gtfs-pathways-dto";
 import { PathwaysQueryParams } from "../model/gtfs-pathways-get-query-params";
 import { PolygonDto } from "../model/polygon-model";
 import { IGtfsPathwaysService } from "./interface/gtfs-pathways-service-interface";
-import tdeiDbClient from "../database/tdei-data-source";
+import { StationDto } from "../model/station-dto";
+import { environment } from "../environment/environment";
+import fetch from "node-fetch";
+import { Utility } from "../utility/utility";
 
 class GtfsPathwaysService implements IGtfsPathwaysService {
     constructor() { }
@@ -60,14 +63,7 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
             pathwayInfo.file_upload_path = decodeURIComponent(pathwayInfo.file_upload_path!);
             //Validate station_id 
             let station = await this.getStationById(pathwayInfo.tdei_station_id, pathwayInfo.tdei_org_id);
-            if (station) {
-                if (!station.is_active) {
-                    throw new HttpException(400, 'Station id not active');
-                }
-            }
-            else {
-                throw new HttpException(400, 'Station id not found');
-            }
+            if (!station) throw new Error("Station id not found or inactive.");
 
             await pathwaysDbClient.query(pathwayInfo.getInsertQuery());
 
@@ -84,17 +80,27 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
         }
     }
 
-    private async getStationById(stationId: string, orgId: string): Promise<any> {
-        const queryObject = {
-            text: `SELECT * FROM Station WHERE station_id = $1 and owner_org= $2 limit 1`.replace(/\n/g, ""),
-            values: [stationId, orgId],
+    private async getStationById(stationId: string, orgId: string): Promise<StationDto> {
+        try {
+            let secretToken = await Utility.generateSecret();
+            const result = await fetch(`${environment.stationUrl}?station_id=${stationId}&owner_org=${orgId}&page_no=1&page_size=1`, {
+                method: 'get',
+                headers: { 'Content-Type': 'application/json', 'x-secret': secretToken }
+            });
+
+            const data: [] = await result.json();
+
+            if (result.status != undefined && result.status != 200)
+                throw new Error(await result.json());
+
+            if (data.length == 0)
+                throw new Error();
+
+            return StationDto.from(data.pop());
+        } catch (error: any) {
+            console.error(error);
+            throw new Error("Station id not found or inactive.");
         }
-
-        let result = await tdeiDbClient.query(queryObject);
-
-        if (result.rows.length == 0) return Promise.reject(null);
-
-        return result.rows[0];
     }
 }
 
