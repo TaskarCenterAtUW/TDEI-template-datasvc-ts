@@ -5,7 +5,6 @@ import { validate, ValidationError } from 'class-validator';
 import { AzureQueueConfig } from "nodets-ms-core/lib/core/queue/providers/azure-queue-config";
 import { environment } from "../environment/environment";
 import { Core } from "nodets-ms-core";
-import { Polygon } from "../model/polygon-model";
 import { QueueMessageContent } from "../model/queue-message-model";
 import { Topic } from "nodets-ms-core/lib/core/queue/topic";
 import { QueueMessage } from "nodets-ms-core/lib/core/queue";
@@ -47,8 +46,6 @@ class EventBusService implements IEventBusServiceInterface {
             pathwayVersions.tdei_record_id = queueMessage.tdeiRecordId;
             pathwayVersions.uploaded_by = queueMessage.userId;
             pathwayVersions.file_upload_path = queueMessage.meta.file_upload_path;
-            //This line will instantiate the polygon class and set defult class values
-            pathwayVersions.polygon = new Polygon({ coordinates: pathwayVersions.polygon.coordinates });
             console.info(`Received message: ${messageReceived.data}`);
 
             validate(pathwayVersions).then(errors => {

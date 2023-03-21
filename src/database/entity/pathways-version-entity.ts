@@ -2,52 +2,52 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 import { Prop } from 'nodets-ms-core/lib/models';
 import { QueryConfig } from 'pg';
 import { BaseDto } from '../../model/base-dto';
-import { Polygon, PolygonDto } from '../../model/polygon-model';
 import { IsValidPolygon } from '../../validators/polygon-validator';
+import { FeatureCollection } from 'geojson';
 
 export class PathwayVersions extends BaseDto {
     //id!: number;
     @Prop()
     @IsNotEmpty()
-    tdei_record_id: string = "";
+    tdei_record_id!: string;
     @Prop()
     @IsNotEmpty()
     confidence_level: number = 0;
     @Prop()
     @IsNotEmpty()
-    tdei_org_id: string = "";
+    tdei_org_id!: string;
     @Prop()
     @IsNotEmpty()
-    tdei_station_id: string = "";
+    tdei_station_id!: string;
     @Prop()
     @IsNotEmpty()
-    file_upload_path: string = "";
-    uploaded_by: string = "";
+    file_upload_path!: string;
+    uploaded_by!: string;
     @IsNotEmpty()
     @Prop()
-    collected_by: string = "";
+    collected_by!: string;
     @IsNotEmpty()
     @Prop()
-    collection_date: Date = new Date();
+    collection_date!: Date;
     @IsNotEmpty()
     @Prop()
-    collection_method: string = "";
+    collection_method!: string;
     @IsNotEmpty()
     @Prop()
-    valid_from: Date = new Date();
+    valid_from!: Date;
     @IsNotEmpty()
     @Prop()
-    valid_to: Date = new Date();
+    valid_to!: Date;
     @IsNotEmpty()
     @Prop()
-    data_source: string = "";
+    data_source!: string;
     @IsNotEmpty()
     @Prop()
-    pathways_schema_version: string = "";
+    pathways_schema_version!: string;
     @IsOptional()
     @IsValidPolygon()
     @Prop()
-    polygon!: PolygonDto;
+    polygon!: FeatureCollection;
 
     constructor(init?: Partial<PathwayVersions>) {
         super();
@@ -76,7 +76,7 @@ export class PathwayVersions extends BaseDto {
                 , this.collected_by, this.collection_date, this.collection_method, this.valid_from, this.valid_to, this.data_source, this.pathways_schema_version],
         }
         if (polygonExists) {
-            queryObject.values.push(JSON.stringify(new Polygon({ coordinates: this.polygon.coordinates })));
+            queryObject.values.push(JSON.stringify(this.polygon.features[0].geometry));
         }
         return queryObject;
     }
