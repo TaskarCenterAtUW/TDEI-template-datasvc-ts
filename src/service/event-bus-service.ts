@@ -30,7 +30,7 @@ class EventBusService implements IEventBusServiceInterface {
 
             console.log("Received message for : ", queueMessage.tdeiRecordId, "Message received for gtfs pathways processing !");
 
-            if (!queueMessage.response.success || !queueMessage.meta.isValid) {
+            if (!queueMessage.response.success) {
                 let errorMessage = "Received failed workflow request";
                 console.error(queueMessage.tdeiRecordId, errorMessage, messageReceived);
                 return Promise.resolve();
