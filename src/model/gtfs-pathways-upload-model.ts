@@ -1,7 +1,7 @@
 import { IsOptional } from "class-validator";
 import { AbstractDomainEntity, Prop } from "nodets-ms-core/lib/models";
 import { IsValidPolygon } from "../validators/polygon-validator";
-import { Polygon } from "./polygon-model";
+import { FeatureCollection } from 'geojson';
 
 export class GtfsPathwaysUploadModel extends AbstractDomainEntity {
     @Prop()
@@ -30,6 +30,6 @@ export class GtfsPathwaysUploadModel extends AbstractDomainEntity {
     pathways_schema_version!: string;
     @IsOptional()
     @IsValidPolygon()
-    polygon!: Polygon;
+    polygon!: FeatureCollection;
 }
 

@@ -8,12 +8,12 @@ import HttpException from "../exceptions/http/http-base-exception";
 import { DuplicateException } from "../exceptions/http/http-exceptions";
 import { GtfsPathwaysDTO } from "../model/gtfs-pathways-dto";
 import { PathwaysQueryParams } from "../model/gtfs-pathways-get-query-params";
-import { PolygonDto } from "../model/polygon-model";
 import { IGtfsPathwaysService } from "./interface/gtfs-pathways-service-interface";
 import { StationDto } from "../model/station-dto";
 import { environment } from "../environment/environment";
 import fetch from "node-fetch";
 import { Utility } from "../utility/utility";
+import { Geometry, Feature } from "geojson";
 
 class GtfsPathwaysService implements IGtfsPathwaysService {
     constructor() { }
@@ -34,8 +34,19 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
         result.rows.forEach(x => {
 
             let pathway: GtfsPathwaysDTO = GtfsPathwaysDTO.from(x);
-            if (pathway.polygon)
-                pathway.polygon = new PolygonDto({ coordinates: JSON.parse(x.polygon2).coordinates });
+            if (pathway.polygon) {
+                var polygon = JSON.parse(x.polygon2) as Geometry;
+                pathway.polygon = {
+                    type: "FeatureCollection",
+                    features: [
+                        {
+                            type: "Feature",
+                            geometry: polygon,
+                            properties: {}
+                        } as Feature
+                    ]
+                }
+            }
             list.push(pathway);
         })
         return Promise.resolve(list);
