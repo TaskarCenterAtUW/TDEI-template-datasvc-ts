@@ -34,6 +34,9 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
         result.rows.forEach(x => {
 
             let pathway: GtfsPathwaysDTO = GtfsPathwaysDTO.from(x);
+            pathway.valid_from = x.valid_from_str;
+            pathway.valid_to = x.valid_to_str;
+            pathway.collection_date = x.collection_date_str;
             if (pathway.polygon) {
                 var polygon = JSON.parse(x.polygon2) as Geometry;
                 pathway.polygon = {

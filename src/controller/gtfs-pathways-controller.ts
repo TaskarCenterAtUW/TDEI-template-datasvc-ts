@@ -7,7 +7,7 @@ import gtfsPathwaysService from "../service/gtfs-pathways-service";
 import validationMiddleware from "../middleware/dto-validation-middleware";
 import { PathwayVersions } from "../database/entity/pathways-version-entity";
 import HttpException from "../exceptions/http/http-base-exception";
-import { DuplicateException } from "../exceptions/http/http-exceptions";
+import { DuplicateException, InputException } from "../exceptions/http/http-exceptions";
 import { validate, ValidationError } from "class-validator";
 
 class GtfsPathwaysController implements IController {
@@ -34,7 +34,12 @@ class GtfsPathwaysController implements IController {
             response.send(gtfsPathways);
         } catch (error) {
             console.error(error);
-            next(new HttpException(500, "Error while fetching the pathways information"));
+            if (error instanceof InputException) {
+                next(error);
+            }
+            else {
+                next(new HttpException(500, "Error while fetching the pathways information"));
+            }
         }
     }
 
