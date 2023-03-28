@@ -5,14 +5,14 @@ import { BaseDto } from "./base-dto";
 import { FeatureCollection } from 'geojson';
 
 export class StationDto extends BaseDto {
-    @Prop()
-    station_id: string = "0";
+    @Prop("tdei_station_id")
+    tdei_station_id: string = "0";
     @IsNotEmpty()
     @Prop()
-    owner_org!: string;
+    tdei_org_id!: string;
     @IsNotEmpty()
-    @Prop()
-    name!: string;
+    @Prop("station_name")
+    station_name!: string;
     @IsOptional()
     @IsValidPolygon()
     @Prop()
