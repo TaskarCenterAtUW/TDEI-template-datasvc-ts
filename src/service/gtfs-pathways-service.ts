@@ -97,7 +97,7 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
     private async getStationById(stationId: string, orgId: string): Promise<StationDto> {
         try {
             let secretToken = await Utility.generateSecret();
-            const result = await fetch(`${environment.stationUrl}?station_id=${stationId}&owner_org=${orgId}&page_no=1&page_size=1`, {
+            const result = await fetch(`${environment.stationUrl}?tdei_station_id=${stationId}&tdei_org_id=${orgId}&page_no=1&page_size=1`, {
                 method: 'get',
                 headers: { 'Content-Type': 'application/json', 'x-secret': secretToken }
             });
