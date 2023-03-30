@@ -28,16 +28,16 @@ export class PathwayVersions extends BaseDto {
     collected_by!: string;
     @IsNotEmpty()
     @Prop()
-    collection_date!: string;
+    collection_date!: Date;
     @IsNotEmpty()
     @Prop()
     collection_method!: string;
     @IsNotEmpty()
     @Prop()
-    valid_from!: string;
+    valid_from!: Date;
     @IsNotEmpty()
     @Prop()
-    valid_to!: string;
+    valid_to!: Date;
     @IsNotEmpty()
     @Prop()
     data_source!: string;
@@ -68,12 +68,12 @@ export class PathwayVersions extends BaseDto {
                 file_upload_path, 
                 uploaded_by,
                 collected_by, 
-                collection_date, collection_date_str,
-                collection_method, valid_from, valid_from_str, valid_to, valid_to_str, data_source,
+                collection_date, 
+                collection_method, valid_from, valid_to, data_source,
                 pathways_schema_version ${polygonExists ? ', polygon ' : ''})
-                VALUES ($1,0,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15 ${polygonExists ? ', ST_GeomFromGeoJSON($16) ' : ''})`.replace(/\n/g, ""),
+                VALUES ($1,0,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12 ${polygonExists ? ', ST_GeomFromGeoJSON($13) ' : ''})`.replace(/\n/g, ""),
             values: [this.tdei_record_id, this.tdei_org_id, this.tdei_station_id, this.file_upload_path, this.uploaded_by
-                , this.collected_by, this.collection_date, this.collection_date, this.collection_method, this.valid_from, this.valid_from, this.valid_to, this.valid_to, this.data_source, this.pathways_schema_version],
+                , this.collected_by, this.collection_date, this.collection_method, this.valid_from, this.valid_to, this.data_source, this.pathways_schema_version],
         }
         if (polygonExists) {
             queryObject.values.push(JSON.stringify(this.polygon.features[0].geometry));
