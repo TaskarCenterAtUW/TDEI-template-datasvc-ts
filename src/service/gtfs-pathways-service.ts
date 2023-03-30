@@ -5,7 +5,7 @@ import pathwaysDbClient from "../database/pathways-data-source";
 import { PathwayVersions } from "../database/entity/pathways-version-entity";
 import UniqueKeyDbException from "../exceptions/db/database-exceptions";
 import HttpException from "../exceptions/http/http-base-exception";
-import { DuplicateException } from "../exceptions/http/http-exceptions";
+import { DuplicateException, OverlapException } from "../exceptions/http/http-exceptions";
 import { GtfsPathwaysDTO } from "../model/gtfs-pathways-dto";
 import { PathwaysQueryParams } from "../model/gtfs-pathways-get-query-params";
 import { IGtfsPathwaysService } from "./interface/gtfs-pathways-service-interface";
@@ -79,6 +79,11 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
             let station = await this.getStationById(pathwayInfo.tdei_station_id, pathwayInfo.tdei_org_id);
             if (!station) throw new Error("Station id not found or inactive.");
 
+            const queryResult = await pathwaysDbClient.query(pathwayInfo.getOverlapQuery());
+            if(queryResult.rowCount > 0){
+                const recordId = queryResult.rows[0]["tdei_record_id"];
+                throw new OverlapException(recordId);
+            }
             await pathwaysDbClient.query(pathwayInfo.getInsertQuery());
 
             let pathway: GtfsPathwaysDTO = GtfsPathwaysDTO.from(pathwayInfo);
