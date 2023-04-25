@@ -17,16 +17,13 @@ Step 1:
 ### Environment variables
 |Name| Description |
 |--|--|
-| PROVIDER | Provider for cloud service or local |
+| PROVIDER | Provider for cloud service or local (optional)|
 |QUEUECONNECTION | Queue connection string |
 |STORAGECONNECTION | Storage connection string|
-|APPLICATION_PORT |Port on which application will run|
+|PORT |Port on which application will run|
 |VALIDATION_SUBSCRIPTION | Upload topic subscription name|
 |VALIDATION_TOPIC | Validation topic name|
-|EVENT_BUS_CONNECTION | Event bus connection string|
-|AUTH_PERMISSION_URL | Authentication/Authorization url|
-|AUTH_SECRET_TOKEN_GENERATE_URL | Secret token generate url|
-|AUTH_SECRET_TOKEN_VERIFY_URL | Secret token verify url|
+|AUTH_HOST | Base URL for authentication host|
 |POSTGRES_USER | Database user name|
 |POSTGRES_HOST | Database host url|
 |POSTGRES_PASSWORD | Database user password|
@@ -35,6 +32,8 @@ Step 1:
 |SSL | false when running locally otherwise true|
 |STATION_URL | User management /station url|
 |DATASVC_TOPIC | Data service topic|
+
+An example of this is given in [example env file](./env.example)
 
 
 #### Build and Test
@@ -45,8 +44,8 @@ Follow the steps to install the node packages required for both building and run
     npm install
     ```
 2. To start the server, use the command `npm run start`
-3. The http server by default starts with 3000 port or whatever is declared in `process.env.APPLICATION_PORT`
-4. Other routes include a `ping` with get and post. Make `get` or `post` request to `http://localhost:3000/ping`
+3. The http server by default starts with 3000 port or whatever is declared in `process.env.PORT`
+4. Other routes include a `ping` with get and post. Make `get` or `post` request to `http://localhost:3000/health/ping`
 
 
 
