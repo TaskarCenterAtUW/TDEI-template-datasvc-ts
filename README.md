@@ -48,4 +48,30 @@ Follow the steps to install the node packages required for both building and run
 4. Other routes include a `ping` with get and post. Make `get` or `post` request to `http://localhost:3000/health/ping`
 
 
+### Cloud Interaction
+- This service listens to `pathways-validation` topic for all the validation messages
+- If the validation is successful, it processes the message further
+- After the metadata validation, it stores the information in postgresDB and then sends another message to `gtfs-pathways-data` topic
+- This service also handles the GET request for all the pathways files
+
+
+```mermaid
+flowchart LR
+    A[pathways-validaiton-topic]-->B[pathways-data-service]
+    B-->C[pathways-data-topic]
+    B-->D(pathways-database)
+
+```
+GET calls and interaction with DB
+```mermaid
+sequenceDiagram
+    Client->>+Gateway:GET(pathways)
+    Gateway->>+pathways-dataservice: GET
+    pathways-dataservice->>+pathways-database: QUERY
+    pathways-database->>+pathways-dataservice:Result
+    pathways-dataservice->>+Gateway:List of Pathways
+    Gateway->>+Client: Pathway files list
+
+```
+
 
