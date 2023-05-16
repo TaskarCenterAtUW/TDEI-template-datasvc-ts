@@ -97,7 +97,8 @@ graph LR;
 
 
 ```
-Sample GET calls interaction with DB
+- Sample GET calls interaction with DB
+
 ```mermaid
 sequenceDiagram
     Client->>+Gateway:GET(pathways)
@@ -106,7 +107,6 @@ sequenceDiagram
     pathways-database->>+pathways-dataservice:Result
     pathways-dataservice->>+Gateway:List of Pathways
     Gateway->>+Client: Pathway files list
-
 ```
 
 
