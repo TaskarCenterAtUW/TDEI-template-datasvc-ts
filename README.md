@@ -95,8 +95,6 @@ graph LR;
     - Retrive the list of GTFS Pathways files with/without search criteria.
     - Download the GTFS Pathways file given the tdei_record_id
 
-
-```
 - Sample GET calls interaction with DB
 
 ```mermaid
