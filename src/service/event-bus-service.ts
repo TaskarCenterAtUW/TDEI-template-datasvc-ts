@@ -72,7 +72,7 @@ class EventBusService implements IEventBusServiceInterface {
                         this.publish(messageReceived,
                             {
                                 success: false,
-                                message: 'Error occured while processing osw request : ' + error.message
+                                message: 'Error occured while processing pathways request : ' + error.message
                             });
                         return Promise.resolve();
                     });
