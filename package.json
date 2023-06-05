@@ -4,16 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest ./build",
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:coverage": "jest --coverage",
     "build": "rimraf ./build && tsc",
-    "start": "npm run build  && npm run copy:assets && node build/server.js",
+    "start": "npm run build  && npm run copy:assets && node build/src/server.js",
     "start:dev": "nodemon",
-    "copy:assets": "cp -r 'src/assets/' 'build/assets/'"
+    "copy:assets": "cp -r 'src/assets/' 'build/src/assets/'",
+    "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@faker-js/faker": "^8.0.1",
+    "@jest-mock/express": "^2.0.1",
     "@types/geojson": "7946.0.10",
     "@types/body-parser": "^1.19.2",
     "@types/cors": "^2.8.13",
@@ -23,6 +28,7 @@
     "@types/jest": "^29.2.4",
     "@types/node": "^18.11.9",
     "jest": "^29.3.1",
+    "jest-html-reporter": "3.7.1",
     "nodemon": "^2.0.19",
     "rimraf": "^3.0.2",
     "ts-jest": "^29.0.3",
@@ -44,6 +50,7 @@
     "reflect-metadata": "^0.1.13",
     "node-fetch": "^2.6.7",
     "class-validator": "^0.14.0",
-    "geojson-validation": "^1.0.2"
+    "geojson-validation": "^1.0.2",
+    "jest-fetch-mock": "^3.0.3"
   }
 }
