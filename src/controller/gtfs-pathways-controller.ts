@@ -74,8 +74,8 @@ class GtfsPathwaysController implements IController {
                 if (errors.length > 0) {
                     console.error('Upload pathways file metadata information failed validation. errors: ', errors);
                     const message = errors.map((error: ValidationError) => Object.values(<any>error.constraints)).join(', ');
-                    response.status(500).send('Input validation failed with below reasons : \n' + message);
-                    next(new HttpException(500, 'Input validation failed with below reasons : \n' + message));
+                    response.status(400).send('Input validation failed with below reasons : \n' + message);
+                    next(new HttpException(400, 'Input validation failed with below reasons : \n' + message));
                 } else {
                     return await gtfsPathwaysService.createGtfsPathway(pathways)
                         .then(newPathways => {
