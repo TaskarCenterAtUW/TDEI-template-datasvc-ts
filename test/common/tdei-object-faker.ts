@@ -1,5 +1,5 @@
 import { FeatureCollection } from "geojson";
-import { PathwayVersions } from "../../src/database/entity/pathways-version-entity";
+import { PathwayVersions } from "../database/entity/pathways-version-entity";
 import gtfsPathwaysValidationSuccessMessage from "../test-data/Pathways-validation-success.message.json";
 
 export class TdeiObjectFaker {
