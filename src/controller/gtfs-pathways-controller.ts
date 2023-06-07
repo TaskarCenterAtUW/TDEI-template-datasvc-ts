@@ -27,17 +27,18 @@ class GtfsPathwaysController implements IController {
 
         try {
             var params: PathwaysQueryParams = new PathwaysQueryParams(JSON.parse(JSON.stringify(request.query)));
-
             // load gtfsPathways
             const gtfsPathways = await gtfsPathwaysService.getAllGtfsPathway(params);
             // return loaded gtfsPathways
-            response.send(gtfsPathways);
+            response.status(200).send(gtfsPathways);
         } catch (error) {
             console.error(error);
             if (error instanceof InputException) {
+                response.status(error.status).send(error.message);
                 next(error);
             }
             else {
+                response.status(500).send("Error while fetching the pathways information");
                 next(new HttpException(500, "Error while fetching the pathways information"));
             }
         }
@@ -54,10 +55,12 @@ class GtfsPathwaysController implements IController {
             response.status(200);
             (await fileEntity.getStream()).pipe(response);
         } catch (error) {
-            console.error('Error while getting the file stream');
-            console.error(error);
-            if (error instanceof HttpException)
-                throw next(error);
+            console.error('Error while getting the file stream', error);
+            if (error instanceof HttpException) {
+                response.status(error.status).send(error.message);
+                return next(error);
+            }
+            response.status(500).send("Error while getting the file stream");
             next(new HttpException(500, "Error while getting the file stream"));
         }
     }
@@ -66,27 +69,34 @@ class GtfsPathwaysController implements IController {
         try {
             let pathways = PathwayVersions.from(request.body);
 
-            validate(pathways).then(async errors => {
+            return validate(pathways).then(async errors => {
                 // errors is an array of validation errors
                 if (errors.length > 0) {
                     console.error('Upload pathways file metadata information failed validation. errors: ', errors);
                     const message = errors.map((error: ValidationError) => Object.values(<any>error.constraints)).join(', ');
-                    next(new HttpException(500, 'Input validation failed with below reasons : \n' + message));
+                    response.status(400).send('Input validation failed with below reasons : \n' + message);
+                    next(new HttpException(400, 'Input validation failed with below reasons : \n' + message));
                 } else {
-                    var newGtfsPathways = await gtfsPathwaysService.createGtfsPathway(pathways)
+                    return await gtfsPathwaysService.createGtfsPathway(pathways)
+                        .then(newPathways => {
+                            return Promise.resolve(response.status(200).send(newPathways));
+                        })
                         .catch((error: any) => {
                             if (error instanceof DuplicateException) {
-                                throw error;
+                                response.status(error.status).send(error.message);
+                                next(new HttpException(error.status, error.message));
                             }
-                            next(new HttpException(500, 'Error saving the Pathways version'));
+                            else {
+                                response.status(500).send('Error saving the pathways version')
+                                next(new HttpException(500, 'Error saving the pathways version'));
+                            }
                         });
-                    response.send(newGtfsPathways);
                 }
             });
         } catch (error) {
-            console.error('Error saving the pathways version');
-            console.error(error);
-            next(error);
+            console.error('Error saving the pathways version', error);
+            response.status(500).send('Error saving the pathways version')
+            next(new HttpException(500, "Error saving the osw version"));
         }
     }
 }

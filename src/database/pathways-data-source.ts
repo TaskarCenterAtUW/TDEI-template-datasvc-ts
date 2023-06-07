@@ -4,9 +4,13 @@ import { environment } from '../environment/environment';
 import UniqueKeyDbException, { ForeignKeyDbException } from '../exceptions/db/database-exceptions';
 
 class PathwaysDataSource {
-    private pool: Pool;
+    private pool: Pool = new Pool;
 
     constructor() {
+    }
+
+
+    initializaDatabase() {
         console.info("Initializing Pathways database !");
         this.pool = new Pool({
             database: environment.postgres.pathways_database,

@@ -52,11 +52,11 @@ class EventBusService implements IEventBusServiceInterface {
                 // errors is an array of validation errors
                 if (errors.length > 0) {
                     const message = errors.map((error: ValidationError) => Object.values(<any>error.constraints)).join(', ');
-                    console.error('Upload flex file metadata information failed validation. errors: ', errors);
+                    console.error('Upload pathways file metadata information failed validation. errors: ', errors);
                     this.publish(messageReceived,
                         {
                             success: false,
-                            message: 'Upload flex file metadata information failed validation. errors: ' + message
+                            message: 'Upload pathways file metadata information failed validation. errors: ' + message
                         });
                     return Promise.resolve();
                 } else {
