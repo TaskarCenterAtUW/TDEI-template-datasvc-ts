@@ -52,8 +52,13 @@ class EventBusService implements IEventBusServiceInterface {
                 // errors is an array of validation errors
                 if (errors.length > 0) {
                     const message = errors.map((error: ValidationError) => Object.values(<any>error.constraints)).join(', ');
-                    console.error('Upload flex file metadata information failed validation. errors: ', errors);
-                    throw Error(message);
+                    console.error('Upload pathways file metadata information failed validation. errors: ', errors);
+                    this.publish(messageReceived,
+                        {
+                            success: false,
+                            message: 'Upload pathways file metadata information failed validation. errors: ' + message
+                        });
+                    return Promise.resolve();
                 } else {
                     gtfsPathwaysService.createGtfsPathway(pathwayVersions).then((res) => {
                         this.publish(messageReceived,
@@ -67,7 +72,7 @@ class EventBusService implements IEventBusServiceInterface {
                         this.publish(messageReceived,
                             {
                                 success: false,
-                                message: 'Error occured while processing osw request : ' + error.message
+                                message: 'Error occured while processing pathways request : ' + error.message
                             });
                         return Promise.resolve();
                     });

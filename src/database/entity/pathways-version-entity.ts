@@ -80,4 +80,17 @@ export class PathwayVersions extends BaseDto {
         }
         return queryObject;
     }
+
+    getOverlapQuery(): QueryConfig {
+        const fromDate = new Date(this.valid_from);
+        const toDate = new Date(this.valid_to);
+        const queryObject = {
+            text:`SELECT tdei_record_id from public.pathway_versions where
+            tdei_org_id = $1
+            AND tdei_station_id = $2 
+            AND (valid_from, valid_to) OVERLAPS ($3, $4)`,
+            values:[this.tdei_org_id, this.tdei_station_id, fromDate,toDate]
+        };
+        return queryObject;
+    }
 }
