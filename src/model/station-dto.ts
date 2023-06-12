@@ -6,7 +6,7 @@ import { FeatureCollection } from 'geojson';
 
 export class StationDto extends BaseDto {
     @Prop("tdei_station_id")
-    tdei_station_id: string = "0";
+    tdei_station_id = "0";
     @IsNotEmpty()
     @Prop()
     tdei_org_id!: string;

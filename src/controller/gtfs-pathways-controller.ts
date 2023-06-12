@@ -26,7 +26,7 @@ class GtfsPathwaysController implements IController {
     getAllGtfsPathway = async (request: Request, response: express.Response, next: NextFunction) => {
 
         try {
-            var params: PathwaysQueryParams = new PathwaysQueryParams(JSON.parse(JSON.stringify(request.query)));
+            const params: PathwaysQueryParams = new PathwaysQueryParams(JSON.parse(JSON.stringify(request.query)));
             // load gtfsPathways
             const gtfsPathways = await gtfsPathwaysService.getAllGtfsPathway(params);
             // return loaded gtfsPathways
@@ -48,7 +48,7 @@ class GtfsPathwaysController implements IController {
 
         try {
             // load a gtfsPathway by a given gtfsPathway id
-            let fileEntity: FileEntity = await gtfsPathwaysService.getGtfsPathwayById(request.params.id);
+            const fileEntity: FileEntity = await gtfsPathwaysService.getGtfsPathwayById(request.params.id);
 
             response.header('Content-Type', fileEntity.mimeType);
             response.header('Content-disposition', `attachment; filename=${fileEntity.fileName}`);
@@ -67,7 +67,7 @@ class GtfsPathwaysController implements IController {
 
     createGtfsPathway = async (request: Request, response: express.Response, next: NextFunction) => {
         try {
-            let pathways = PathwayVersions.from(request.body);
+            const pathways = PathwayVersions.from(request.body);
 
             return validate(pathways).then(async errors => {
                 // errors is an array of validation errors
