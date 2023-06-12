@@ -20,18 +20,9 @@ describe("Pathways Service Test", () => {
         describe("Functional", () => {
             test("When requested with empty search filters, Expect to return pathways list", async () => {
                 //Arrange
-                var pathwaysObj = TdeiObjectFaker.getGtfsPathwaysVersionFromDB();
-                const dummyResponse = <QueryResult<any>>{
-                    rows: [
-                        pathwaysObj
-                    ]
-                };
-                const getAllGtfsPathwaySpy = jest
-                    .spyOn(pathwaysDbClient, "query")
-                    .mockResolvedValueOnce(dummyResponse);
-                var params: PathwaysQueryParams = new PathwaysQueryParams();
+                const params: PathwaysQueryParams = new PathwaysQueryParams();
                 //Act
-                var result = await pathwaysStation.getAllGtfsPathway(params);
+                const result = await pathwaysStation.getAllGtfsPathway(params);
                 //Assert
                 expect(Array.isArray(result));
                 expect(result.every(item => item instanceof GtfsPathwaysDTO));
@@ -39,16 +30,7 @@ describe("Pathways Service Test", () => {
 
             test("When requested with all search filters, Expect to return pathways list", async () => {
                 //Arrange
-                var pathwaysObj = TdeiObjectFaker.getGtfsPathwaysVersionFromDB();
-                const dummyResponse = <QueryResult<any>>{
-                    rows: [
-                        pathwaysObj
-                    ]
-                };
-                const getAllGtfsPathwaySpy = jest
-                    .spyOn(pathwaysDbClient, "query")
-                    .mockResolvedValueOnce(dummyResponse);
-                var params: PathwaysQueryParams = new PathwaysQueryParams();
+                const params: PathwaysQueryParams = new PathwaysQueryParams();
                 params.page_no = 1;
                 params.page_size = 10;
                 params.date_time = "03-03-2023";
@@ -58,7 +40,7 @@ describe("Pathways Service Test", () => {
                 params.pathways_schema_version = "v1.0";
                 params.bbox = [1, 2, 3, 4]
                 //Act
-                var result = await pathwaysStation.getAllGtfsPathway(params);
+                const result = await pathwaysStation.getAllGtfsPathway(params);
                 //Assert
                 expect(Array.isArray(result));
                 expect(result.every(item => item instanceof GtfsPathwaysDTO));
@@ -66,16 +48,7 @@ describe("Pathways Service Test", () => {
 
             test("When requested with invalid date search filter, Expect to throw InputException", async () => {
                 //Arrange
-                var pathwaysObj = TdeiObjectFaker.getGtfsPathwaysVersionFromDB();
-                const dummyResponse = <QueryResult<any>>{
-                    rows: [
-                        pathwaysObj
-                    ]
-                };
-                const getAllGtfsPathwaySpy = jest
-                    .spyOn(pathwaysDbClient, "query")
-                    .mockResolvedValueOnce(dummyResponse);
-                var params: PathwaysQueryParams = new PathwaysQueryParams();
+                const params: PathwaysQueryParams = new PathwaysQueryParams();
                 params.page_no = 1;
                 params.page_size = 10;
                 params.date_time = "13-13-2023";
@@ -91,16 +64,7 @@ describe("Pathways Service Test", () => {
 
             test("When requested with invalid bbox search filter, Expect to throw InputException", async () => {
                 //Arrange
-                var pathwaysObj = TdeiObjectFaker.getGtfsPathwaysVersionFromDB();
-                const dummyResponse = <QueryResult<any>>{
-                    rows: [
-                        pathwaysObj
-                    ]
-                };
-                const getAllGtfsPathwaySpy = jest
-                    .spyOn(pathwaysDbClient, "query")
-                    .mockResolvedValueOnce(dummyResponse);
-                var params: PathwaysQueryParams = new PathwaysQueryParams();
+                const params: PathwaysQueryParams = new PathwaysQueryParams();
                 params.page_no = 1;
                 params.page_size = 10;
                 params.date_time = "03-03-2023";
@@ -120,7 +84,6 @@ describe("Pathways Service Test", () => {
         describe("Functional", () => {
             test("When requested for get Pathways version by tdei_record_id, Expect to return FileEntity object", async () => {
                 //Arrange
-                var pathwaysObj = TdeiObjectFaker.getGtfsPathwaysVersionFromDB();
                 const dummyResponse = <QueryResult<any>>{
                     rows: [
                         {
@@ -134,14 +97,13 @@ describe("Pathways Service Test", () => {
                     .mockResolvedValueOnce(dummyResponse);
 
                 //Act
-                var result = await pathwaysStation.getGtfsPathwayById("tdei_record_id");
+                const result = await pathwaysStation.getGtfsPathwayById("tdei_record_id");
                 //Assert
                 expect(result instanceof FileEntity);
             });
 
             test("When requested for get Pathways version with invalid tdei_record_id, Expect to throw HttpException", async () => {
                 //Arrange
-                var pathwaysObj = TdeiObjectFaker.getGtfsPathwaysVersionFromDB();
                 const dummyResponse = <QueryResult<any>><unknown>{
                     rows: [],
                     rowCount: 0
@@ -158,7 +120,6 @@ describe("Pathways Service Test", () => {
 
             test("When Core failed obtaing storage client, Expect to throw error", async () => {
                 //Arrange
-                var pathwaysObj = TdeiObjectFaker.getGtfsPathwaysVersionFromDB();
                 const dummyResponse = <QueryResult<any>><unknown>{
                     rows: [
                         {
@@ -185,7 +146,7 @@ describe("Pathways Service Test", () => {
         describe("Functional", () => {
             test("When requested for creating Pathways version with valid input, Expect to return GtfsPathwaysDTO object", async () => {
                 //Arrange
-                var pathwaysObj = PathwayVersions.from(TdeiObjectFaker.getGtfsPathwaysVersion());
+                const pathwaysObj = PathwayVersions.from(TdeiObjectFaker.getGtfsPathwaysVersion());
 
                 const insertPathwaysResponse = <QueryResult<any>>{
                     rows: [
@@ -204,14 +165,14 @@ describe("Pathways Service Test", () => {
                     .mockResolvedValueOnce(new StationDto());
 
                 //Act
-                var result = await pathwaysStation.createGtfsPathway(pathwaysObj);
+                const result = await pathwaysStation.createGtfsPathway(pathwaysObj);
                 //Assert
                 expect(result instanceof GtfsPathwaysDTO);
             });
 
             test("When database exception with duplicate tdei_org_id occured while processing request, Expect to throw DuplicateException", async () => {
                 //Arrange
-                var pathwaysObj = PathwayVersions.from(TdeiObjectFaker.getGtfsPathwaysVersion());
+                const pathwaysObj = PathwayVersions.from(TdeiObjectFaker.getGtfsPathwaysVersion());
 
                 const overlapResponse = <QueryResult<any>>{
                     rowCount: 0
@@ -230,13 +191,8 @@ describe("Pathways Service Test", () => {
 
             test("When database exception occured while processing request, Expect to throw error", async () => {
                 //Arrange
-                var pathwaysObj = PathwayVersions.from(TdeiObjectFaker.getGtfsPathwaysVersion());
+                const pathwaysObj = PathwayVersions.from(TdeiObjectFaker.getGtfsPathwaysVersion());
 
-                const dummyResponse = <QueryResult<any>>{
-                    rows: [
-                        pathwaysObj
-                    ]
-                };
 
                 const overlapResponse = <QueryResult<any>>{
                     rowCount: 0
@@ -267,7 +223,7 @@ describe("Pathways Service Test", () => {
                 }));
                 mockUtility();
                 //Act
-                var result = await pathwaysStation.getStationById("test_station_id", "test_org_id");
+                const result = await pathwaysStation.getStationById("test_station_id", "test_org_id");
                 //Assert
                 expect(result instanceof StationDto);
             });

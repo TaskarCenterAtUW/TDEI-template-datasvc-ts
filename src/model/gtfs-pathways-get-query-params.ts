@@ -15,16 +15,16 @@ export class PathwaysQueryParams {
     @IsOptional()
     tdei_station_id: string | undefined;
     @IsOptional()
-    confidence_level: number = 0;
+    confidence_level = 0;
     @IsOptional()
     @IsArray()
     @ArrayMinSize(4)
     @ArrayMaxSize(4)
     bbox: Array<number> = [];
     @IsOptional()
-    page_no: number = 1;
+    page_no = 1;
     @IsOptional()
-    page_size: number = 10;
+    page_size = 10;
 
     constructor(init?: Partial<PathwaysQueryParams>) {
         Object.assign(this, init);
@@ -35,7 +35,7 @@ export class PathwaysQueryParams {
      * @returns DynamicQueryObject
      */
     getQueryObject() {
-        let queryObject: DynamicQueryObject = new DynamicQueryObject();
+        const queryObject: DynamicQueryObject = new DynamicQueryObject();
         queryObject.buildSelect("pathway_versions", ["ST_AsGeoJSON(polygon) as polygon2, *"]);
         queryObject.buildPagination(this.page_no, this.page_size);
         queryObject.buildOrder("uploaded_date", SqlORder.DESC);
