@@ -20,6 +20,15 @@ describe("Pathways Service Test", () => {
         describe("Functional", () => {
             test("When requested with empty search filters, Expect to return pathways list", async () => {
                 //Arrange
+                var pathwaysObj = TdeiObjectFaker.getGtfsPathwaysVersionFromDB();
+                const dummyResponse = <QueryResult<any>>{
+                    rows: [
+                        pathwaysObj
+                    ]
+                };
+                const getAllGtfsPathwaySpy = jest
+                    .spyOn(pathwaysDbClient, "query")
+                    .mockResolvedValueOnce(dummyResponse);
                 const params: PathwaysQueryParams = new PathwaysQueryParams();
                 //Act
                 const result = await pathwaysStation.getAllGtfsPathway(params);
@@ -29,7 +38,17 @@ describe("Pathways Service Test", () => {
             });
 
             test("When requested with all search filters, Expect to return pathways list", async () => {
+
                 //Arrange
+                var pathwaysObj = TdeiObjectFaker.getGtfsPathwaysVersionFromDB();
+                const dummyResponse = <QueryResult<any>>{
+                    rows: [
+                        pathwaysObj
+                    ]
+                };
+                const getAllGtfsPathwaySpy = jest
+                    .spyOn(pathwaysDbClient, "query")
+                    .mockResolvedValueOnce(dummyResponse);
                 const params: PathwaysQueryParams = new PathwaysQueryParams();
                 params.page_no = 1;
                 params.page_size = 10;

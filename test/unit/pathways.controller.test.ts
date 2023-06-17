@@ -32,6 +32,9 @@ describe("Pathways Controller Test", () => {
                 //Arrange
                 const req = getMockReq({ body: { collection_date: "2023" } });
                 const { res, next } = getMockRes();
+                const getAllGtfsPathwaySpy = jest
+                .spyOn(gtfsPathwaysService, "getAllGtfsPathway")
+                .mockRejectedValueOnce(new InputException("Invalid date provided."));
                 //Act
                 await gtfsPathwaysController.getAllGtfsPathway(req, res, next);
                 //Assert
@@ -73,7 +76,9 @@ describe("Pathways Controller Test", () => {
                 //Arrange
                 const req = getMockReq();
                 const { res, next } = getMockRes();
-
+                const getGtfsPathwayByIdSpy = jest
+                .spyOn(gtfsPathwaysService, "getGtfsPathwayById")
+                .mockRejectedValueOnce(new HttpException(404, "Record not found"));
                 //Act
                 await gtfsPathwaysController.getGtfsPathwayById(req, res, next);
                 //Assert
