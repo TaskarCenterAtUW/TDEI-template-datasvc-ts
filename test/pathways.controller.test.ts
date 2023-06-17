@@ -3,8 +3,9 @@ import { GtfsPathwaysDTO } from "../src/model/gtfs-pathways-dto";
 import gtfsPathwaysService from "../src/service/gtfs-pathways-service";
 import { getMockReq, getMockRes } from "@jest-mock/express";
 import { TdeiObjectFaker } from "./common/tdei-object-faker";
-import { DuplicateException } from "../src/exceptions/http/http-exceptions";
+import { DuplicateException, InputException } from "../src/exceptions/http/http-exceptions";
 import { getMockFileEntity } from "./common/mock-utils";
+import HttpException from "../src/exceptions/http/http-base-exception";
 
 // group test using describe
 describe("Pathways Controller Test", () => {
@@ -31,6 +32,9 @@ describe("Pathways Controller Test", () => {
                 //Arrange
                 const req = getMockReq({ body: { collection_date: "2023" } });
                 const { res, next } = getMockRes();
+                const getAllGtfsPathwaySpy = jest
+                .spyOn(gtfsPathwaysService, "getAllGtfsPathway")
+                .mockRejectedValueOnce(new InputException("Invalid date provided."));
                 //Act
                 await gtfsPathwaysController.getAllGtfsPathway(req, res, next);
                 //Assert
@@ -72,7 +76,9 @@ describe("Pathways Controller Test", () => {
                 //Arrange
                 const req = getMockReq();
                 const { res, next } = getMockRes();
-
+                const getGtfsPathwayByIdSpy = jest
+                .spyOn(gtfsPathwaysService, "getGtfsPathwayById")
+                .mockRejectedValueOnce(new HttpException(404, "Record not found"));
                 //Act
                 await gtfsPathwaysController.getGtfsPathwayById(req, res, next);
                 //Assert
