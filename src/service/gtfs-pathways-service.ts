@@ -71,7 +71,8 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
 
     async createGtfsPathway(pathwayInfo: PathwayVersions): Promise<GtfsPathwaysDTO> {
         try {
-            pathwayInfo.file_upload_path = decodeURIComponent(pathwayInfo.file_upload_path!);
+            pathwayInfo.file_upload_path = pathwayInfo.file_upload_path ? decodeURIComponent(pathwayInfo.file_upload_path) : "";
+
             //Validate station_id 
             const station = await this.getStationById(pathwayInfo.tdei_station_id, pathwayInfo.tdei_org_id);
             if (!station) throw new Error("Station id not found or inactive.");

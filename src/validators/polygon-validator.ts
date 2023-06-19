@@ -47,12 +47,12 @@ export class isPolygon implements ValidatorConstraintInterface {
 
 export function IsValidPolygon(validationOptions?: ValidationOptions) {
     return function (object: object, propertyName: string) {
-        registerDecorator({
-            target: (object as any).constructor,
-            propertyName: propertyName,
-            options: validationOptions,
-            constraints: [],
-            validator: isPolygon,
-        });
-    };
+    registerDecorator({
+        target: (object as any).constructor,
+        propertyName: propertyName,
+        options: validationOptions,
+        constraints: [],
+        validator: isPolygon,
+    });
+};
 }
