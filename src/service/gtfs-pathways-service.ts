@@ -16,7 +16,7 @@ import { Utility } from "../utility/utility";
 import { Geometry, Feature } from "geojson";
 
 class GtfsPathwaysService implements IGtfsPathwaysService {
-    constructor() { }
+    constructor() { /* TODO document why this constructor is empty */  }
 
     async getAllGtfsPathway(params: PathwaysQueryParams): Promise<GtfsPathwaysDTO[]> {
 

@@ -13,11 +13,11 @@ describe("Queue message service", () => {
     describe("Process Queue message", () => {
         describe("Functional", () => {
             test("When valid message received, Expect to process the message successfully", async () => {
-                let messagedProcessed: boolean = false;
+                let messagedProcessed = false;
                 //Arrange
                 mockQueueMessageContent(true);
 
-                var mockTopic: Topic = getMockTopic();
+                const mockTopic: Topic = getMockTopic();
                 mockTopic.publish = (message: QueueMessage): Promise<void> => {
                     messagedProcessed = message.data.response.success;
                     //Assert
@@ -28,10 +28,10 @@ describe("Queue message service", () => {
                 //Mock the topic
                 eventBusService.publishingTopic = mockTopic;
 
-                var dummyResponse = <GtfsPathwaysDTO>{
+                const dummyResponse = <GtfsPathwaysDTO>{
                     tdei_record_id: "test_record_id"
                 };
-                const createGtfsPathwaySpy = jest
+                    jest
                     .spyOn(pathwaysService, "createGtfsPathway")
                     .mockResolvedValueOnce(dummyResponse);
 

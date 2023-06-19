@@ -61,7 +61,7 @@ export class PathwaysQueryParams {
         return queryObject;
     }
 
-    removeLastWord(str: string, wordToRemove: string) {
+    removeLastWord(str: string) {
         const lastIndexOfSpace = str.lastIndexOf(' ');
 
         if (lastIndexOfSpace === -1) {
