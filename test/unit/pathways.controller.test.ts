@@ -1,11 +1,11 @@
-import gtfsPathwaysController from "../src/controller/gtfs-pathways-controller";
-import { GtfsPathwaysDTO } from "../src/model/gtfs-pathways-dto";
-import gtfsPathwaysService from "../src/service/gtfs-pathways-service";
+import gtfsPathwaysController from "../../src/controller/gtfs-pathways-controller";
+import { GtfsPathwaysDTO } from "../../src/model/gtfs-pathways-dto";
+import gtfsPathwaysService from "../../src/service/gtfs-pathways-service";
 import { getMockReq, getMockRes } from "@jest-mock/express";
-import { TdeiObjectFaker } from "./common/tdei-object-faker";
-import HttpException from "../src/exceptions/http/http-base-exception";
-import { DuplicateException, InputException } from "../src/exceptions/http/http-exceptions";
-import { getMockFileEntity } from "./common/mock-utils";
+import { TdeiObjectFaker } from "./../common/tdei-object-faker";
+import HttpException from "../../src/exceptions/http/http-base-exception";
+import { DuplicateException, InputException } from "../../src/exceptions/http/http-exceptions";
+import { getMockFileEntity } from "./../common/mock-utils";
 
 // group test using describe
 describe("Pathways Controller Test", () => {

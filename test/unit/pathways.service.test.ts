@@ -1,17 +1,17 @@
 import { QueryResult } from "pg";
-import pathwaysDbClient from "../src/database/pathways-data-source";
-import pathwaysStation from "../src/service/gtfs-pathways-service";
-import { TdeiObjectFaker } from "./common/tdei-object-faker";
-import { PathwaysQueryParams } from "../src/model/gtfs-pathways-get-query-params";
-import { GtfsPathwaysDTO } from "../src/model/gtfs-pathways-dto";
+import pathwaysDbClient from "../../src/database/pathways-data-source";
+import pathwaysStation from "../../src/service/gtfs-pathways-service";
+import { TdeiObjectFaker } from "./../common/tdei-object-faker";
+import { PathwaysQueryParams } from "../../src/model/gtfs-pathways-get-query-params";
+import { GtfsPathwaysDTO } from "../../src/model/gtfs-pathways-dto";
 import { FileEntity } from "nodets-ms-core/lib/core/storage";
-import { mockCore, mockUtility } from "./common/mock-utils";
-import { PathwayVersions } from "../src/database/entity/pathways-version-entity";
-import UniqueKeyDbException from "../src/exceptions/db/database-exceptions";
-import { DuplicateException, InputException } from "../src/exceptions/http/http-exceptions";
-import HttpException from "../src/exceptions/http/http-base-exception";
+import { mockCore, mockUtility } from "./../common/mock-utils";
+import { PathwayVersions } from "../../src/database/entity/pathways-version-entity";
+import UniqueKeyDbException from "../../src/exceptions/db/database-exceptions";
+import { DuplicateException, InputException } from "../../src/exceptions/http/http-exceptions";
+import HttpException from "../../src/exceptions/http/http-base-exception";
 import { Core } from "nodets-ms-core";
-import { StationDto } from "../src/model/station-dto";
+import { StationDto } from "../../src/model/station-dto";
 import fetchMock from "jest-fetch-mock";
 
 // group test using describe

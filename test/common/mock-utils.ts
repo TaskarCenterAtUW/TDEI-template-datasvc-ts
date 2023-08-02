@@ -5,6 +5,9 @@ import { FileEntity, StorageClient, StorageContainer } from "nodets-ms-core/lib/
 import { Readable } from "stream"
 import { QueueMessageContent } from "../../src/model/queue-message-model";
 import { Utility } from "../../src/utility/utility";
+import { IAuthorizer } from "nodets-ms-core/lib/core/auth/abstracts/IAuthorizer";
+import { IAuthConfig } from "nodets-ms-core/lib/core/auth/abstracts/IAuthConfig";
+import { PermissionRequest } from "nodets-ms-core/lib/core/auth/model/permission_request";
 
 export function getMockFileEntity() {
     var fileEntity: FileEntity = {
@@ -63,10 +66,25 @@ export function getMockTopic() {
     return mockTopic;
 }
 
-export function mockCore() {
+export function getAuthorizer(mockAuthResponse: boolean): any {
+    const authorizer = Core.getAuthorizer({ provider: "Simulated" });
+
+    jest.spyOn(authorizer!, "hasPermission").mockImplementation((permissionRequest: PermissionRequest) => {
+        return Promise.resolve(mockAuthResponse);
+    });
+
+    return authorizer;
+}
+
+export function mockCore(mockStorage: boolean = true, mockTopic: boolean = true,
+    mockAuthResponse: boolean = true) {
     jest.spyOn(Core, "initialize");
-    jest.spyOn(Core, "getStorageClient").mockImplementation(() => { return getMockStorageClient(); });
-    jest.spyOn(Core, "getTopic").mockImplementation(() => { return getMockTopic(); });
+    if (mockStorage) jest.spyOn(Core, "getStorageClient").mockImplementation(() => { return getMockStorageClient(); });
+    if (mockTopic) jest.spyOn(Core, "getTopic").mockImplementation(() => { return getMockTopic(); });
+    jest.spyOn(Core, "getAuthorizer").mockImplementation((config: Partial<IAuthConfig>) => {
+        return getAuthorizer(mockAuthResponse);
+    }
+    );
 }
 
 export function mockQueueMessageContent(permissionResolve: boolean = true) {

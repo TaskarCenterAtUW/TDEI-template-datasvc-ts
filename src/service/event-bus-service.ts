@@ -10,15 +10,24 @@ import { Topic } from "nodets-ms-core/lib/core/queue/topic";
 import { QueueMessage } from "nodets-ms-core/lib/core/queue";
 import { randomUUID } from "crypto";
 
-class EventBusService implements IEventBusServiceInterface {
+/**
+ * Event Service Bus Class
+ */
+export class EventBusService implements IEventBusServiceInterface {
     private queueConfig: AzureQueueConfig;
     publishingTopic: Topic;
 
-    constructor() {
+    /**
+     * Event bus constructor
+     * @param queueConnection  Queue connection string
+     * @param publishingTopicName Publishing topic name
+     */
+    constructor(queueConnection: string = environment.eventBus.connectionString as string,
+        publishingTopicName: string = environment.eventBus.dataServiceTopic as string) {
         Core.initialize();
         this.queueConfig = new AzureQueueConfig();
-        this.queueConfig.connectionString = environment.eventBus.connectionString as string;
-        this.publishingTopic = Core.getTopic(environment.eventBus.dataServiceTopic as string);
+        this.queueConfig.connectionString = queueConnection;
+        this.publishingTopic = Core.getTopic(publishingTopicName);
     }
 
     // function to handle messages
@@ -60,16 +69,16 @@ class EventBusService implements IEventBusServiceInterface {
                         });
                     return Promise.resolve();
                 } else {
-                    gtfsPathwaysService.createGtfsPathway(pathwayVersions).then((res) => {
-                        this.publish(messageReceived,
+                    gtfsPathwaysService.createGtfsPathway(pathwayVersions).then(async (res) => {
+                        await this.publish(messageReceived,
                             {
                                 success: true,
                                 message: 'GTFS Pathways request processed successfully !'
                             });
                         return Promise.resolve();
-                    }).catch((error: any) => {
+                    }).catch(async (error: any) => {
                         console.error('Error saving the pathways version', error);
-                        this.publish(messageReceived,
+                        await this.publish(messageReceived,
                             {
                                 success: false,
                                 message: 'Error occured while processing pathways request : ' + error.message
@@ -80,7 +89,7 @@ class EventBusService implements IEventBusServiceInterface {
             });
         } catch (error) {
             console.error(tdeiRecordId, 'Error occured while processing gtfs pathways request', error);
-            this.publish(messageReceived,
+            await this.publish(messageReceived,
                 {
                     success: false,
                     message: 'Error occured while processing gtfs pathways request' + error
@@ -89,7 +98,7 @@ class EventBusService implements IEventBusServiceInterface {
         }
     };
 
-    private publish(queueMessage: QueueMessage, response: {
+    private async publish(queueMessage: QueueMessage, response: {
         success: boolean,
         message: string
     }) {
@@ -99,7 +108,7 @@ class EventBusService implements IEventBusServiceInterface {
         //Set response
         queueMessageContent.response.success = response.success;
         queueMessageContent.response.message = response.message;
-        this.publishingTopic.publish(QueueMessage.from(
+        await this.publishingTopic.publish(QueueMessage.from(
             {
                 messageType: 'gtfs-pathways-data-service',
                 data: queueMessageContent,
@@ -116,15 +125,19 @@ class EventBusService implements IEventBusServiceInterface {
         console.error(error);
     };
 
-    subscribeUpload(): void {
-        Core.getTopic(environment.eventBus.validationTopic as string,
+    subscribeUpload(validationTopic: string = environment.eventBus.validationTopic as string,
+        validationSubscription: string = environment.eventBus.validationSubscription as string): void {
+        Core.getTopic(validationTopic,
             this.queueConfig)
-            .subscribe(environment.eventBus.validationSubscription as string, {
+            .subscribe(validationSubscription, {
                 onReceive: this.processUpload,
                 onError: this.processUploadError
             });
     }
 }
 
-const eventBusService = new EventBusService();
-export default eventBusService;
+// const eventBusService = new EventBusService();
+/**
+ * event service bus instance
+ */
+// export default eventBusService;

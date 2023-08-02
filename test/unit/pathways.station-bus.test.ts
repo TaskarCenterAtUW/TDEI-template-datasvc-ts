@@ -1,11 +1,13 @@
-import pathwaysService from "../src/service/gtfs-pathways-service";
-import { TdeiObjectFaker } from "./common/tdei-object-faker";
-import { GtfsPathwaysDTO } from "../src/model/gtfs-pathways-dto";
-import { getMockTopic, mockCore, mockQueueMessageContent } from "./common/mock-utils";
+import pathwaysService from "../../src/service/gtfs-pathways-service";
+import { TdeiObjectFaker } from "./../common/tdei-object-faker";
+import { GtfsPathwaysDTO } from "../../src/model/gtfs-pathways-dto";
+import { getMockTopic, mockCore, mockQueueMessageContent } from "./../common/mock-utils";
 import { QueueMessage } from "nodets-ms-core/lib/core/queue";
 import { Topic } from "nodets-ms-core/lib/core/queue/topic";
-import eventBusService from "../src/service/event-bus-service";
+import { EventBusService } from "../../src/service/event-bus-service";
+// import eventBusService from "../src/service/event-bus-service";
 
+var eventBusService = new EventBusService();
 // group test using describe
 describe("Queue message service", () => {
     describe("Process Queue message", () => {

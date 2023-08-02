@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import { IController } from "./controller/interface/IController";
 import helmet from "helmet";
 import { Core } from "nodets-ms-core";
-import eventBusService from "./service/event-bus-service";
+import { EventBusService } from "./service/event-bus-service";
 import cors from "cors";
 import { unhandledExceptionAndRejectionHandler } from "./middleware/unhandled-exception-rejection-handler";
 import { errorHandler } from "./middleware/error-handler-middleware";
@@ -13,6 +13,7 @@ import pathwaysDbClient from "./database/pathways-data-source";
 class App {
     public app: express.Application;
     public port: number;
+    private eventBusService!: EventBusService;
 
     constructor(controllers: IController[], port: number) {
         this.app = express();
@@ -35,7 +36,8 @@ class App {
     }
 
     private subscribeUpload() {
-        eventBusService.subscribeUpload();
+        this.eventBusService = new EventBusService();
+        this.eventBusService.subscribeUpload();
     }
 
     private initializeMiddlewares() {
