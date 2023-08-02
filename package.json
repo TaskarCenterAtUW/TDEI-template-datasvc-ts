@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --testRegex 'test/unit'",
     "test:watch": "jest --watchAll",
-    "test:integration": "jest --testRegex 'test/integration' --forceExit",
+    "test:integration": "TEST_ENV=integration jest --testRegex 'test/integration' --forceExit",
     "test:coverage": "jest --coverage",
     "build": "rimraf ./build && tsc",
     "start": "npm run build  && npm run copy:assets && node build/src/server.js",
