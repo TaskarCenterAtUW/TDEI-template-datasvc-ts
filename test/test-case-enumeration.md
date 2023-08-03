@@ -89,5 +89,5 @@ describe("{{Component}}", () => {
 |--|--|--|--|--|
 | Pathways Service | Servicebus Integration | Subscribe to validation result topic to verify servicebus integration| Expect to return message |:white_check_mark:|
 | Pathways Service | Permission Request | Verifying auth service hasPermission api integration| Expect to return false |:white_check_mark:|
-| Pathways Service | Auth service | Verifying auth service generate secret api integration | Expect to return true |:white_check_mark:|
-| Pathways Service | Station Service | Verifying station get service api integration | Expect to return true |:white_check_mark:|
+| Pathways Service | Auth service | Verifying auth service generate secret api integration | Expect to return HTTP status 200 |:white_check_mark:|
+| Pathways Service | Station Service | Verifying station get service api integration | Expect to return HTTP status 200 |:white_check_mark:|
