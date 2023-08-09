@@ -119,7 +119,7 @@ Follow the steps to install the node packages required for testing the applicati
     ```
 2. To start testing suits, use the command `npm test` , this command will execute all the unit test suites defined for application.
 
-Note: Unit test doesnt require any of the env variables. Running the above command will execute the suites.
+Note: Unit test doesnt require any of the env variables. Running the above command will execute the testing suites.
 
 ## How to run integration test
 To run integration test you need a `.env` file which will be available on request.
