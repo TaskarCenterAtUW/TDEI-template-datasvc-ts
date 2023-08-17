@@ -87,7 +87,7 @@ describe("{{Component}}", () => {
 
 | Component | Feature Under Test | Scenario | Expectation | Status |
 |--|--|--|--|--|
-| Pathways Service | Servicebus Integration | Subscribe to validation result topic to verify servicebus integration| Expect to return message |:white_check_mark:|
-| Pathways Service | Permission Request | Verifying auth service hasPermission api integration| Expect to return false |:white_check_mark:|
+| Pathways Service | Servicebus Integration | Subscribe to a validation topic | Expect to process the message and return response in target topic  |:white_check_mark:|
+| Pathways Service | Permission Request | Verifying auth permission with invalid credentials | Expect to resolve as false  (and not throw exception) |:white_check_mark:|
 | Pathways Service | Auth service | Verifying auth service generate secret api integration | Expect to return HTTP status 200 |:white_check_mark:|
 | Pathways Service | Station Service | Verifying station get service api integration | Expect to return HTTP status 200 |:white_check_mark:|

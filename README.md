@@ -4,6 +4,56 @@ Data service micro-service helps TDEI system to persisting & querying the inform
 ## Getting Started
 The project is built on NodeJS framework. All the regular nuances for a NodeJS project are valid for this.
 
+
+## System flow
+---
+
+Diagram describes the Data service system flow
+
+```mermaid
+graph LR;
+    B(Data Service) -->|subscribes| A[gtfs-pathways-validation]
+    B -->|publishes| C(gtfs-pathways-data)
+    B -->|Save| D(GTFS Pathways Database)
+    B -->|Auth| E(Auth Service)
+    B -->|Details| I(User Management Service)
+    G(Gateway) -->|GET| B(Data Service)
+    H(Client) -->|GET| G
+```
+
+- `Client`, makes HTTP GET calls to `Gateway`
+    - Retrive the list of GTFS Pathways files with/without search criteria.
+    - Download the GTFS Pathways file given the tdei_record_id
+
+- `Data Service`, authorizes the every incoming request against the `Auth Service` 
+
+- `Data Service`, subscribes to `gtfs-pathways-validation` topic to listen to validation results of the gtfs-pathways file upload request.
+
+- `Data Service`, gets the TDEI entity details from `User Management Service` 
+
+- If validation is failed , Data Service publishes the information to `gtfs-pathways-data` topic to update request status complete without persisting the information.
+
+- If validation is successful , Data Service first persists the information to the `GTFS Pathways database` and publishes the information to `gtfs-pathways-data` topic to update request status complete.
+
+- `gtfs-pathways-validation` topic message schema can be found [here](https://github.com/TaskarCenterAtUW/TDEI-event-messages/blob/dev/schema/gtfs-pathway-validation-schema.json)
+
+- `gtfs-pathways-data` topic message schema can be found [here](https://github.com/TaskarCenterAtUW/TDEI-event-messages/blob/dev/schema/gtfs-pathway-validation-schema.json)
+
+
+
+- Sample GET calls interaction with DB
+
+```mermaid
+sequenceDiagram
+    Client->>+Gateway:GET(pathways)
+    Gateway->>+pathways-dataservice: GET
+    pathways-dataservice->>+pathways-database: QUERY
+    pathways-database->>+pathways-dataservice:Result
+    pathways-dataservice->>+Gateway:List of Pathways
+    Gateway->>+Client: Pathway files list
+```
+
+
 ## System requirements
 | Software | Version|
 |----|---|
@@ -69,60 +119,40 @@ Follow the steps to install the node packages required for testing the applicati
     ```
 2. To start testing suits, use the command `npm test` , this command will execute all the unit test suites defined for application.
 
+Note: Unit test doesnt require any of the env variables. Running the above command will execute the testing suites.
+
+## How to run integration test
+To run integration test you need a `.env` file which will be available on request.
+
+Steps to run:
+
+Execute the following commands.
+
+```
+npm run i
+```
+
+``` 
+npm run test:integration
+```
+
+## Required env for running tests
+
+For running integration test, following env variables are required.
+
+|Name| Description |
+|--|--|
+|QUEUECONNECTION | Queue connection string |
+|STORAGECONNECTION | Storage connection string|
+|AUTH_HOST | Host of the authentication service |
+|VALIDATION_SUBSCRIPTION | Upload topic subscription name|
+|VALIDATION_TOPIC | Validation topic name|
+|DATASVC_TOPIC | Data service publishing topic|
+
+
 
 ## Database schema
 ---
 
 Database schema can be found [here](https://github.com/TaskarCenterAtUW/TDEI-internaldocs/blob/master/adr/database-schema.md) for reference.
-
-## System flow
----
-
-Diagram describes the Data service system flow
-
-```mermaid
-graph LR;
-    B(Data Service) -->|subscribes| A[gtfs-pathways-validation]
-    B -->|publishes| C(gtfs-pathways-data)
-    B -->|Save| D(GTFS Pathways Database)
-    B -->|Auth| E(Auth Service)
-    B -->|Details| I(User Management Service)
-    G(Gateway) -->|GET| B(Data Service)
-    H(Client) -->|GET| G
-```
-
-- `Client`, makes HTTP GET calls to `Gateway`
-    - Retrive the list of GTFS Pathways files with/without search criteria.
-    - Download the GTFS Pathways file given the tdei_record_id
-
-- `Data Service`, authorizes the every incoming request against the `Auth Service` 
-
-- `Data Service`, subscribes to `gtfs-pathways-validation` topic to listen to validation results of the gtfs-pathways file upload request.
-
-- `Data Service`, gets the TDEI entity details from `User Management Service` 
-
-- If validation is failed , Data Service publishes the information to `gtfs-pathways-data` topic to update request status complete without persisting the information.
-
-- If validation is successful , Data Service first persists the information to the `GTFS Pathways database` and publishes the information to `gtfs-pathways-data` topic to update request status complete.
-
-- `gtfs-pathways-validation` topic message schema can be found [here](https://github.com/TaskarCenterAtUW/TDEI-event-messages/blob/dev/schema/gtfs-pathway-validation-schema.json)
-
-- `gtfs-pathways-data` topic message schema can be found [here](https://github.com/TaskarCenterAtUW/TDEI-event-messages/blob/dev/schema/gtfs-pathway-validation-schema.json)
-
-
-
-- Sample GET calls interaction with DB
-
-```mermaid
-sequenceDiagram
-    Client->>+Gateway:GET(pathways)
-    Gateway->>+pathways-dataservice: GET
-    pathways-dataservice->>+pathways-database: QUERY
-    pathways-database->>+pathways-dataservice:Result
-    pathways-dataservice->>+Gateway:List of Pathways
-    Gateway->>+Client: Pathway files list
-```
-
-
-
 
