@@ -7,6 +7,26 @@ on:
   workflow_dispatch:
 
 jobs:
+  IntegrationTest:
+    environment: Development
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dmitriybobrovskiy/get-azure-keyvault-secrets@v1.2.0
+        with:
+          login_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          keyvault: tdei-secrets
+          secrets: |
+            QUEUECONNECTION=QUEUECONNECTION
+            STORAGECONNECTION=STORAGECONNECTION
+            AUTH_HOST=AUTH_HOST
+            VALIDATION_SUBSCRIPTION=VALIDATION_SUBSCRIPTION
+            VALIDATION_TOPIC=VALIDATION_TOPIC
+            DATASVC_TOPIC=DATASVC_TOPIC
+      - name: Some step to consume secrets
+        run: |
+          echo "${{ env.QUEUECONNECTION }} ${{ env.STORAGECONNECTION }}"
   Build:
     environment: Development
     runs-on: ubuntu-latest
