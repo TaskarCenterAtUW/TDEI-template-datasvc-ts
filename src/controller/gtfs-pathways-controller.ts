@@ -7,10 +7,25 @@ import gtfsPathwaysService from "../service/gtfs-pathways-service";
 import validationMiddleware from "../middleware/dto-validation-middleware";
 import { PathwayVersions } from "../database/entity/pathways-version-entity";
 import HttpException from "../exceptions/http/http-base-exception";
-import { DuplicateException, InputException } from "../exceptions/http/http-exceptions";
+import { DuplicateException, InputException, FileTypeException } from "../exceptions/http/http-exceptions";
 import { validate, ValidationError } from "class-validator";
 import { Versions } from "../model/versions-dto";
 import { environment } from "../environment/environment";
+import multer, { memoryStorage } from "multer";
+import { GtfsPathwaysDTO } from "../model/gtfs-pathways-dto";
+import { GtfsPathwaysUploadMeta } from "../model/gtfs-pathways-upload-meta";
+import storageService from "../service/storage-service";
+import path from "path";
+import { Readable } from "stream";
+import { tokenValidator } from "../middleware/token-validation-middleware";
+import { metajsonValidator } from "../middleware/json-validation-middleware";
+import { EventBusService } from "../service/event-bus-service";
+
+
+
+
+
+
 
 class GtfsPathwaysController implements IController {
     public path = '/api/v1/gtfs-pathways';
