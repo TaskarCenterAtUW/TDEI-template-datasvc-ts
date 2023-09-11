@@ -50,10 +50,12 @@ class GtfsPathwaysController implements IController {
         this.intializeRoutes();
     }
 
+    eventBusService = new EventBusService();
+
     public intializeRoutes() {
         this.router.get(this.path, this.getAllGtfsPathway);
         this.router.get(`${this.path}/:id`, this.getGtfsPathwayById);
-        this.router.post(this.path, validationMiddleware(PathwayVersions), this.createGtfsPathway);
+        this.router.post(this.path, upload.single('file'), metajsonValidator,tokenValidator,this.createGtfsPathway);
         this.router.get(`${this.path}/versions/info`, this.getVersions);
     }
 
@@ -111,41 +113,56 @@ class GtfsPathwaysController implements IController {
         }
     }
 
+    /**
+     * Function to create record in the database and upload the gtfs-pathway files
+     * @param request 
+     * @param response 
+     * @param next 
+     * @returns 
+     */
     createGtfsPathway = async (request: Request, response: express.Response, next: NextFunction) => {
         try {
-            const pathways = PathwayVersions.from(request.body);
+            console.log('Received upload request');
+            const meta = JSON.parse(request.body['meta']);
+            const userId = request.body.user_id;
+            // Validate the meta data
+            const gtfsdto = GtfsPathwaysUploadMeta.from(meta);
+            const result = await validate(gtfsdto);
+            console.log('result', result);
+        
+            if(result.length != 0){
+                console.log('Metadata validation failed');
+                console.log(result);
+                // Need to send these as response
+            }
+            // Generate the files and upload them
+            const uid = storageService.generateRandomUUID(); // Fetches a random UUID for the record
+            const folderPath = storageService.getFolderPath(gtfsdto.tdei_org_id,uid);
+            const uploadedFile = request.file;
+            const uploadPath = path.join(folderPath,uploadedFile!.originalname)
+            const remoteUrl = await storageService.uploadFile(uploadPath,'application/zip',Readable.from(uploadedFile!.buffer))
+            // Upload the meta file  
+            const metaFilePath = path.join(folderPath,'meta.json');
+            const metaUrl = await storageService.uploadFile(metaFilePath,'text/json',gtfsdto.getStream());
+            // Insert into database
+            const pathway = PathwayVersions.from(meta);
+            pathway.tdei_record_id = uid;
+            pathway.file_upload_path = remoteUrl;
+            pathway.uploaded_by = userId;
+            const returnInfo = await gtfsPathwaysService.createGtfsPathway(pathway);
 
-            return validate(pathways).then(async errors => {
-                // errors is an array of validation errors
-                if (errors.length > 0) {
-                    console.error('Upload pathways file metadata information failed validation. errors: ', errors);
-                    const message = errors.map((error: ValidationError) => Object.values(<any>error.constraints)).join(', ');
-                    response.status(400).send('Input validation failed with below reasons : \n' + message);
-                    next(new HttpException(400, 'Input validation failed with below reasons : \n' + message));
-                } else {
-                    return await gtfsPathwaysService.createGtfsPathway(pathways)
-                        .then(newPathways => {
-                            return Promise.resolve(response.status(200).send(newPathways));
-                        })
-                        .catch((error: any) => {
-                            if (error instanceof DuplicateException) {
-                                response.status(error.status).send(error.message);
-                                next(new HttpException(error.status, error.message));
-                            }
-                            else {
-                                response.status(500).send('Error saving the pathways version')
-                                next(new HttpException(500, 'Error saving the pathways version'));
-                            }
-                        });
-                }
-            });
+            // Publish to the topic
+            this.eventBusService.publishUpload(gtfsdto,uid,remoteUrl,userId,metaUrl);
+            // Also send the information to the queue
+            console.log('Responding to request');
+            return response.status(200).send(uid);
+
         } catch (error) {
-            console.error('Error saving the pathways version', error);
-            response.status(500).send('Error saving the pathways version')
-            next(new HttpException(500, "Error saving the osw version"));
-        }
+            console.error('Error saving the flex file', error);
+            response.status(500).send('Error saving the flex file');
+        } 
     }
 }
-
+    
 const gtfsPathwaysController = new GtfsPathwaysController();
 export default gtfsPathwaysController;
