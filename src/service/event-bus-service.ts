@@ -9,6 +9,7 @@ import { QueueMessageContent } from "../model/queue-message-model";
 import { Topic } from "nodets-ms-core/lib/core/queue/topic";
 import { QueueMessage } from "nodets-ms-core/lib/core/queue";
 import { randomUUID } from "crypto";
+import { GtfsPathwaysUploadMeta } from "../model/gtfs-pathways-upload-meta";
 
 /**
  * Event Service Bus Class
@@ -16,6 +17,7 @@ import { randomUUID } from "crypto";
 export class EventBusService implements IEventBusServiceInterface {
     private queueConfig: AzureQueueConfig;
     publishingTopic: Topic;
+    public uploadTopic: Topic;
 
     /**
      * Event bus constructor
@@ -28,6 +30,7 @@ export class EventBusService implements IEventBusServiceInterface {
         this.queueConfig = new AzureQueueConfig();
         this.queueConfig.connectionString = queueConnection;
         this.publishingTopic = Core.getTopic(publishingTopicName);
+        this.uploadTopic = Core.getTopic(environment.eventBus.uploadTopic as string);
     }
 
     // function to handle messages
@@ -136,6 +139,37 @@ export class EventBusService implements IEventBusServiceInterface {
                 onError: this.processUploadError
             });
     }
+
+     /**
+     * Publishes the upload of a gtfs-flex file
+     */
+     public publishUpload(request:GtfsPathwaysUploadMeta, recordId:string,file_upload_path:string, userId:string, meta_file_path:string){
+        const messageContent =  QueueMessageContent.from({
+             stage:'flex-upload',
+             request:request,
+             userId:userId,
+             orgId:request.tdei_org_id,
+             tdeiRecordId:recordId,
+             meta:{
+                 'file_upload_path':file_upload_path,
+                 'meta_file_path':meta_file_path
+             },
+             response:{
+                 success:true,
+                 message:'File uploaded for the organization: '+request.tdei_org_id+' with record id'+recordId
+             }
+         });
+         const message = QueueMessage.from(
+             {
+                 messageType:'gtfs-flex-upload',
+                 data:messageContent,
+ 
+             }
+         )
+         this.uploadTopic.publish(message);
+     }
+
+
 }
 
 // const eventBusService = new EventBusService();
