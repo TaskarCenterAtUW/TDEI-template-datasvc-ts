@@ -22,9 +22,25 @@ import { metajsonValidator } from "../middleware/json-validation-middleware";
 import { EventBusService } from "../service/event-bus-service";
 
 
+/**
+ * Multer for multiple uploads
+ * Configured to pull to 'uploads' folder
+ * and buffer is available with the request
+ * File filter is added to ensure only files with .zip extension
+ * are allowed
+ */
 
-
-
+const upload = multer({
+    dest: 'uploads/',
+    storage: memoryStorage(),
+    fileFilter: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        if (ext != '.zip') {
+            cb(new FileTypeException());
+        }
+        cb(null, true);
+    }
+});
 
 
 class GtfsPathwaysController implements IController {
