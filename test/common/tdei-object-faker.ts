@@ -1,6 +1,7 @@
 import { FeatureCollection } from "geojson";
 import gtfsPathwaysValidationSuccessMessage from "../test-data/pathways-validation-success.message.json";
 import { PathwayVersions } from "../../src/database/entity/pathways-version-entity";
+import { th } from "date-fns/locale";
 
 export class TdeiObjectFaker {
     static getGtfsPathwaysVersion() {
@@ -20,6 +21,20 @@ export class TdeiObjectFaker {
             pathways_schema_version: "v1.0",
             tdei_station_id: "test_station_id"
         } as PathwayVersions;
+    }
+
+    static getGtfsPathwaysPayload(){
+        return {
+            polygon: this.getPolygon(),
+            tdei_org_id: 'tdei-org-id',
+            tdei_service_id:'tdei-service-id',
+            collected_by:'collectedby',
+            collection_method:'manual',
+            data_source:'InHouse',
+            pathways_schema_version:'v2.0',
+            valid_from: new Date(),
+            valid_to : new Date()
+        }
     }
 
     static getGtfsPathwaysVersionFromDB() {
