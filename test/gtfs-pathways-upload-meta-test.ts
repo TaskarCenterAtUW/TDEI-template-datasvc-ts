@@ -8,7 +8,7 @@ describe('GTFS Pathways Upload metadata test', ()=>{
         test('When supplied without collected by, meta validation should fail', async ()=>{
             const meta = `{
                 "tdei_org_id":"5e339544-3b12-40a5-8acd-78c66d1fa981",
-                "tdei_service_id":"333",
+                "tdei_station_id":"333",
                 "collected_by":"",
                 "collection_date":"2023-03-02T04:22:42.493Z",
                 "collection_method":"manual",

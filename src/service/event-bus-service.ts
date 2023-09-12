@@ -145,7 +145,7 @@ export class EventBusService implements IEventBusServiceInterface {
      */
      public publishUpload(request:GtfsPathwaysUploadMeta, recordId:string,file_upload_path:string, userId:string, meta_file_path:string){
         const messageContent =  QueueMessageContent.from({
-             stage:'flex-upload',
+             stage:'pathways-upload',
              request:request,
              userId:userId,
              orgId:request.tdei_org_id,
@@ -161,7 +161,7 @@ export class EventBusService implements IEventBusServiceInterface {
          });
          const message = QueueMessage.from(
              {
-                 messageType:'gtfs-flex-upload',
+                 messageType:'gtfs-pathways-upload',
                  data:messageContent,
  
              }

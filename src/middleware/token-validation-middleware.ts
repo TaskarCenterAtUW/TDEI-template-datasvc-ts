@@ -18,7 +18,7 @@ import { UnAuthenticated } from '../exceptions/http/http-exceptions';
  */
 export async function tokenValidator(req: Request, res: Response, next: NextFunction) {
 
-    const approvedRoles = ["tdei_admin", "poc", "flex_data_generator"]; // Change it based on service
+    const approvedRoles = ["tdei_admin", "poc", "pathways_data_generator"]; // Change it based on service
 
     // Get the authorization key
     const bearerHeader = req.headers.authorization;
