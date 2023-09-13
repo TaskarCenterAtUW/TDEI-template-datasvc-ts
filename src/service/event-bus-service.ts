@@ -141,7 +141,7 @@ export class EventBusService implements IEventBusServiceInterface {
     }
 
      /**
-     * Publishes the upload of a gtfs-flex file
+     * Publishes the upload of a gtfs-pathways file
      */
      public publishUpload(request:GtfsPathwaysUploadMeta, recordId:string,file_upload_path:string, userId:string, meta_file_path:string){
         const messageContent =  QueueMessageContent.from({
