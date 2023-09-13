@@ -158,8 +158,8 @@ class GtfsPathwaysController implements IController {
             return response.status(200).send(uid);
 
         } catch (error) {
-            console.error('Error saving the flex file', error);
-            response.status(500).send('Error saving the flex file');
+            console.error('Error saving the pathways file', error);
+            response.status(500).send('Error saving the pathways file');
         } 
     }
 }
