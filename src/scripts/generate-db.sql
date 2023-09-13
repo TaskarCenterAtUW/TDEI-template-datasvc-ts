@@ -16,7 +16,7 @@ CREATE DATABASE gtfspathways
 
 -- DROP TABLE IF EXISTS public.pathways_versions;
 
-CREATE TABLE IF NOT EXISTS public.flex_versions
+CREATE TABLE IF NOT EXISTS public.pathways_versions
 (
     id integer NOT NULL DEFAULT nextval('pathways_versions_id_seq'::regclass),
     tdei_record_id character varying COLLATE pg_catalog."default" NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS public.flex_versions
     valid_from timestamp without time zone NOT NULL,
     valid_to timestamp without time zone NOT NULL,
     data_source character varying COLLATE pg_catalog."default" NOT NULL,
-    flex_schema_version character varying COLLATE pg_catalog."default" NOT NULL,
+    pathways_schema_version character varying COLLATE pg_catalog."default" NOT NULL,
     uploaded_date timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     polygon geometry,
     CONSTRAINT "PK_7e3d24ec6024b551e5612baae54" PRIMARY KEY (id),
@@ -47,6 +47,6 @@ ALTER TABLE IF EXISTS public.pathways_versions
 -- DROP INDEX IF EXISTS public.polygon_geom_idx;
 
 CREATE INDEX IF NOT EXISTS polygon_geom_idx
-    ON public.flex_versions USING gist
+    ON public.pathways_versions USING gist
     (polygon)
     TABLESPACE pg_default;
