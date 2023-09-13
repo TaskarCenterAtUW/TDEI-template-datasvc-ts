@@ -32,26 +32,28 @@ export class EventBusService implements IEventBusServiceInterface {
 
     // function to handle messages
     private processUpload = async (messageReceived: any) => {
-        var tdeiRecordId = "";
+        let tdeiRecordId = "";
         try {
-            var queueMessage = QueueMessageContent.from(messageReceived.data);
-            tdeiRecordId = queueMessage.tdeiRecordId!;
+            const queueMessage = QueueMessageContent.from(messageReceived.data);
+            if (queueMessage.tdeiRecordId !== null && queueMessage.tdeiRecordId !== undefined) {
+                tdeiRecordId = queueMessage.tdeiRecordId;
+            }
 
             console.log("Received message for : ", queueMessage.tdeiRecordId, "Message received for gtfs pathways processing !");
 
             if (!queueMessage.response.success) {
-                let errorMessage = "Received failed workflow request";
+                const errorMessage = "Received failed workflow request";
                 console.error(queueMessage.tdeiRecordId, errorMessage, messageReceived);
                 return Promise.resolve();
             }
 
             if (!await queueMessage.hasPermission(["tdei-admin", "poc", "pathways_data_generator"])) {
-                let errorMessage = "Unauthorized request !";
+                const errorMessage = "Unauthorized request !";
                 console.error(queueMessage.tdeiRecordId, errorMessage);
                 throw Error(errorMessage);
             }
 
-            var pathwayVersions: PathwayVersions = PathwayVersions.from(queueMessage.request);
+            const pathwayVersions: PathwayVersions = PathwayVersions.from(queueMessage.request);
             pathwayVersions.tdei_record_id = queueMessage.tdeiRecordId;
             pathwayVersions.uploaded_by = queueMessage.userId;
             pathwayVersions.file_upload_path = queueMessage.meta.file_upload_path;
@@ -69,8 +71,8 @@ export class EventBusService implements IEventBusServiceInterface {
                         });
                     return Promise.resolve();
                 } else {
-                    gtfsPathwaysService.createGtfsPathway(pathwayVersions).then(async (res) => {
-                        await this.publish(messageReceived,
+                    gtfsPathwaysService.createGtfsPathway(pathwayVersions).then(() => {
+                        this.publish(messageReceived,
                             {
                                 success: true,
                                 message: 'GTFS Pathways request processed successfully !'
@@ -102,7 +104,7 @@ export class EventBusService implements IEventBusServiceInterface {
         success: boolean,
         message: string
     }) {
-        var queueMessageContent: QueueMessageContent = QueueMessageContent.from(queueMessage.data);
+        const queueMessageContent: QueueMessageContent = QueueMessageContent.from(queueMessage.data);
         //Set validation stage
         queueMessageContent.stage = 'gtfs-pathways-data-service';
         //Set response
