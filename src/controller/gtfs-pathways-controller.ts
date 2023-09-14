@@ -28,7 +28,7 @@ class GtfsPathwaysController implements IController {
 
     getVersions = async (request: Request, response: express.Response, next: NextFunction) => {
         let versionsList = new Versions([{
-            documentation: environment.getewayUrl as string,
+            documentation: environment.gatewayUrl as string,
             specification: "https://gtfs.org/schedule/examples/pathways/",
             version: "v1.0"
         }]);
