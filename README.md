@@ -83,6 +83,7 @@ Application configuration is read from .env file. Below are the list of environe
 |SSL | false when running locally otherwise true|
 |STATION_URL | User management /station url|
 |DATASVC_TOPIC | Data service topic|
+|GATEWAY_URL | Gatway Url|
 
 ## Local Postgresql database setup
 ---

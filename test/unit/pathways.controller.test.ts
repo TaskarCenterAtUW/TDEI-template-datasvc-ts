@@ -33,8 +33,8 @@ describe("Pathways Controller Test", () => {
                 const req = getMockReq({ body: { collection_date: "2023" } });
                 const { res, next } = getMockRes();
                 jest
-                .spyOn(gtfsPathwaysService, "getAllGtfsPathway")
-                .mockRejectedValueOnce(new InputException("Invalid date provided."));
+                    .spyOn(gtfsPathwaysService, "getAllGtfsPathway")
+                    .mockRejectedValueOnce(new InputException("Invalid date provided."));
                 //Act
                 await gtfsPathwaysController.getAllGtfsPathway(req, res, next);
                 //Assert
@@ -77,8 +77,8 @@ describe("Pathways Controller Test", () => {
                 const req = getMockReq();
                 const { res, next } = getMockRes();
                 jest
-                .spyOn(gtfsPathwaysService, "getGtfsPathwayById")
-                .mockRejectedValueOnce(new HttpException(404, "Record not found"));
+                    .spyOn(gtfsPathwaysService, "getGtfsPathwayById")
+                    .mockRejectedValueOnce(new HttpException(404, "Record not found"));
                 //Act
                 await gtfsPathwaysController.getGtfsPathwayById(req, res, next);
                 //Assert
@@ -188,6 +188,21 @@ describe("Pathways Controller Test", () => {
                 //Assert
                 expect(createGtfsPathwaySpy).toHaveBeenCalledTimes(1);
                 expect(res.status).toBeCalledWith(400);
+            });
+        });
+    });
+
+    describe("Get Version list", () => {
+        describe("Functional", () => {
+
+            test("When requested version info, Expect to return HTTP status 200", async () => {
+                //Arrange
+                let req = getMockReq();
+                const { res, next } = getMockRes();
+                //Act
+                await gtfsPathwaysController.getVersions(req, res, next);
+                //Assert
+                expect(res.status).toHaveBeenCalledWith(200);
             });
         });
     });
