@@ -24,4 +24,6 @@ export class GtfsPathwaysDTO extends AbstractDomainEntity {
     pathways_schema_version!: string;
     @Prop()
     polygon!: FeatureCollection;
+    @Prop()
+    download_url!: string
 }

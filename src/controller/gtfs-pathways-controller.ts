@@ -9,9 +9,11 @@ import { PathwayVersions } from "../database/entity/pathways-version-entity";
 import HttpException from "../exceptions/http/http-base-exception";
 import { DuplicateException, InputException } from "../exceptions/http/http-exceptions";
 import { validate, ValidationError } from "class-validator";
+import { Versions } from "../model/versions-dto";
+import { environment } from "../environment/environment";
 
 class GtfsPathwaysController implements IController {
-    public path = '/api/v1/gtfspathways';
+    public path = '/api/v1/gtfs-pathways';
     public router = express.Router();
     constructor() {
         this.intializeRoutes();
@@ -21,6 +23,17 @@ class GtfsPathwaysController implements IController {
         this.router.get(this.path, this.getAllGtfsPathway);
         this.router.get(`${this.path}/:id`, this.getGtfsPathwayById);
         this.router.post(this.path, validationMiddleware(PathwayVersions), this.createGtfsPathway);
+        this.router.get(`${this.path}/versions/info`, this.getVersions);
+    }
+
+    getVersions = async (request: Request, response: express.Response, next: NextFunction) => {
+        let versionsList = new Versions([{
+            documentation: environment.getewayUrl as string,
+            specification: "https://gtfs.org/schedule/examples/pathways/",
+            version: "v1.0"
+        }]);
+
+        response.status(200).send(versionsList);
     }
 
     getAllGtfsPathway = async (request: Request, response: express.Response, next: NextFunction) => {
@@ -29,7 +42,9 @@ class GtfsPathwaysController implements IController {
             const params: PathwaysQueryParams = new PathwaysQueryParams(JSON.parse(JSON.stringify(request.query)));
             // load gtfsPathways
             const gtfsPathways = await gtfsPathwaysService.getAllGtfsPathway(params);
-            // return loaded gtfsPathways
+            gtfsPathways.forEach(x => {
+                x.download_url = `${this.path}/${x.tdei_record_id}`;
+            })
             response.status(200).send(gtfsPathways);
         } catch (error) {
             console.error(error);
