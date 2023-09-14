@@ -202,7 +202,7 @@ describe("Pathways Controller Test", () => {
                 //Act
                 await gtfsPathwaysController.getVersions(req, res, next);
                 //Assert
-                expect(res.status).toHaveBeenCalledWith(200);
+                expect(res.status).toHaveBeenCalledWith(100);
             });
         });
     });
