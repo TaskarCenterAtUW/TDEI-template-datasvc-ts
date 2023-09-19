@@ -27,7 +27,7 @@ export class TdeiObjectFaker {
         return {
             polygon: this.getPolygon(),
             tdei_org_id: 'tdei-org-id',
-            tdei_service_id:'tdei-service-id',
+            tdei_station_id:'tdei-station-id',
             collected_by:'collectedby',
             collection_method:'manual',
             data_source:'InHouse',
