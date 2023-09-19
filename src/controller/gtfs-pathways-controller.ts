@@ -133,7 +133,8 @@ class GtfsPathwaysController implements IController {
             if(result.length != 0){
                 console.log('Metadata validation failed');
                 console.log(result);
-                // Need to send these as response
+                const message = result.map((error: ValidationError) => Object.values(<any>error.constraints)).join(', ');
+                return response.status(400).send('Input validation failed with below reasons : \n' + message);
             }
             // Generate the files and upload them
             const uid = storageService.generateRandomUUID(); // Fetches a random UUID for the record
