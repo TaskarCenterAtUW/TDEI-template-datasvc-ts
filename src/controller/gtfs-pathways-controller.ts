@@ -160,7 +160,11 @@ class GtfsPathwaysController implements IController {
 
         } catch (error) {
             console.error('Error saving the pathways file', error);
-            response.status(500).send('Error saving the pathways file');
+            if (error instanceof HttpException) {
+                next(error)
+            } else {
+                response.status(500).send('Error saving the pathways file');
+            }
         } 
     }
 }
