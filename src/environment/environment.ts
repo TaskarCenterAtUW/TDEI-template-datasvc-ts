@@ -11,7 +11,8 @@ export const environment = {
         connectionString: process.env.QUEUECONNECTION,
         validationTopic: process.env.VALIDATION_TOPIC,
         validationSubscription: process.env.VALIDATION_SUBSCRIPTION,
-        dataServiceTopic: process.env.DATASVC_TOPIC
+        dataServiceTopic: process.env.DATASVC_TOPIC,
+        uploadTopic:process.env.UPLOAD_TOPIC
     },
     postgres: {
         server_username: process.env.POSTGRES_USER,
