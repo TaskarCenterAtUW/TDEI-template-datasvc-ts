@@ -122,3 +122,31 @@ export function mockUtility() {
     jest.spyOn(Utility, "generateSecret")
         .mockResolvedValueOnce("secret_token");
 }
+
+export function mockMulter() {
+    jest.mock('multer', ()=>{
+        const multer = () =>({
+            any:() =>{
+                return (req:Request,res:Response,next:NextFunction)=>{
+                    req.body.user_id ='sample-user';
+                    req.file = {
+                        originalname:'sample.zip',
+                        mimetype:'application/zip',
+                        path:'sample/path/to.zip',
+                        buffer:Buffer.from('sample-buffer'),
+                        fieldname:'file',
+                        filename:'sample.zip',
+                        size:100,
+                        stream:Readable.from(''),
+                        encoding:'',
+                        destination:''
+                    }
+
+                    return next()
+                }
+            }
+        })
+        multer.memoryStorage = () => jest.fn()
+        return multer
+    })
+}
