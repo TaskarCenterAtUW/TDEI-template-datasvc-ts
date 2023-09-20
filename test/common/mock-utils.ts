@@ -120,5 +120,5 @@ export function mockQueueMessageContent(permissionResolve = true) {
 
 export function mockUtility() {
     jest.spyOn(Utility, "generateSecret")
-        .mockResolvedValueOnce("secretr_token");
+        .mockResolvedValueOnce("secret_token");
 }
