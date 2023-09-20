@@ -4,8 +4,10 @@ import gtfsPathwaysService from "../../src/service/gtfs-pathways-service";
 import { getMockReq, getMockRes } from "@jest-mock/express";
 import { TdeiObjectFaker } from "./../common/tdei-object-faker";
 import HttpException from "../../src/exceptions/http/http-base-exception";
-import { DuplicateException, InputException } from "../../src/exceptions/http/http-exceptions";
-import { getMockFileEntity } from "./../common/mock-utils";
+import { DuplicateException, InputException, OverlapException } from "../../src/exceptions/http/http-exceptions";
+import { getMockFileEntity, mockCore } from "./../common/mock-utils";
+ import { Readable } from "stream";
+import storageService from "../../src/service/storage-service";
 
 // group test using describe
 describe("Pathways Controller Test", () => {
@@ -99,6 +101,68 @@ describe("Pathways Controller Test", () => {
             });
         });
     });
+    describe('Create pathways file', ()=>{
+
+        beforeAll(()=>{
+            mockCore();
+        })
+        test('When valid input provided, expect to return tdei_record_id for new record', async ()=>{
+            mockCore();
+            let req = getMockReq({ body: {"meta":JSON.stringify(TdeiObjectFaker.getGtfsPathwaysPayload2()),"file": Buffer.from('whatever') }});
+            req.file = TdeiObjectFaker.getMockUploadFile();
+            const {res, next} = getMockRes()
+            const dummyResponse =  <GtfsPathwaysDTO>{
+                tdei_record_id:"test_record_id"
+            }
+            const createGtfsPathwaySpy = jest.spyOn(gtfsPathwaysService, "createGtfsPathway").mockResolvedValueOnce(dummyResponse);
+            const storageCliSpy  = jest.spyOn(storageService,"uploadFile").mockResolvedValue('remote_url');
+            const uploadSpy = jest.spyOn(gtfsPathwaysController.eventBusService,"publishUpload").mockImplementation()
+
+            await gtfsPathwaysController.createGtfsPathway(req,res,next)
+            expect(createGtfsPathwaySpy).toHaveBeenCalledTimes(1);
+            expect(res.status).toBeCalledWith(200);
+        })
+
+        test('When invalid meta is provided, expect to return 400 error', async ()=>{
+            const payload = TdeiObjectFaker.getGtfsPathwaysPayload2()
+            payload.collection_method = ""; // Empty collection method
+            let req = getMockReq({ body: {"meta":JSON.stringify(payload),"file": Buffer.from('whatever') }});
+            req.file = TdeiObjectFaker.getMockUploadFile();
+            const {res, next} = getMockRes()
+            await gtfsPathwaysController.createGtfsPathway(req,res,next);
+            expect(res.status).toBeCalledWith(400);
+        });
+
+        test('When database exception occurs, expect to return same error', async ()=>{
+
+            let req = getMockReq({ body: {"meta":JSON.stringify(TdeiObjectFaker.getGtfsPathwaysPayload2()),"file": Buffer.from('whatever') }});
+            req.file = TdeiObjectFaker.getMockUploadFile();
+            mockCore();
+            const {res, next} = getMockRes()
+           const exception  = new DuplicateException("test_record_id")
+            const createGtfsPathwaySpy = jest.spyOn(gtfsPathwaysService,"createGtfsPathway").mockRejectedValueOnce(exception)
+            await gtfsPathwaysController.createGtfsPathway(req,res,next)
+            expect(next).toBeCalledWith(exception);
+
+        })
+        test('When any HTTPexception occurs during the creation, its sent as response', async ()=>{
+
+            let req = getMockReq({ body: {"meta":JSON.stringify(TdeiObjectFaker.getGtfsPathwaysPayload2()),"file": Buffer.from('whatever') }});
+            req.file = TdeiObjectFaker.getMockUploadFile();
+            mockCore();
+            const {res, next} = getMockRes()
+           const exception  = new OverlapException("test_record_id")
+            const createGtfsPathwaySpy = jest.spyOn(gtfsPathwaysService, "createGtfsPathway").mockRejectedValueOnce(exception)
+            await gtfsPathwaysController.createGtfsPathway(req,res,next)
+            expect(next).toBeCalledWith(exception);
+
+        })
+
+    })
+
+
+
+
     describe("Get Version list", () => {
         describe("Functional", () => {
 
