@@ -2,6 +2,7 @@ import { FeatureCollection } from "geojson";
 import gtfsPathwaysValidationSuccessMessage from "../test-data/pathways-validation-success.message.json";
 import { PathwayVersions } from "../../src/database/entity/pathways-version-entity";
 import { th } from "date-fns/locale";
+import { Readable } from "stream";
 
 export class TdeiObjectFaker {
     static getGtfsPathwaysVersion() {
@@ -127,5 +128,20 @@ export class TdeiObjectFaker {
 
     static getGtfsPathwaysQueueMessageSuccess() {
         return gtfsPathwaysValidationSuccessMessage;
+    }
+
+    static getMockUploadFile() {
+        return {
+            originalname:'sample.zip',
+            mimetype:'application/zip',
+            path:'sample/path/to.zip',
+            buffer:Buffer.from('sample-buffer'),
+            fieldname:'file',
+            filename:'sample.zip',
+            size:100,
+            stream:Readable.from(''),
+            encoding:'',
+            destination:''
+        };
     }
 }
