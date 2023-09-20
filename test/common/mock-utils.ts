@@ -93,7 +93,7 @@ export function getAuthorizer(mockAuthResponse: boolean): any {
 
 export function mockCore(mockStorage: boolean = true, mockTopic: boolean = true,
     mockAuthResponse: boolean = true) {
-    jest.spyOn(Core, "initialize");
+    jest.spyOn(Core, "initialize").mockImplementation();
     if (mockStorage) jest.spyOn(Core, "getStorageClient").mockImplementation(() => { return getMockStorageClient(); });
     if (mockTopic) jest.spyOn(Core, "getTopic").mockImplementation(() => { return getMockTopic(); });
     jest.spyOn(Core, "getAuthorizer").mockImplementation((config: Partial<IAuthConfig>) => {
