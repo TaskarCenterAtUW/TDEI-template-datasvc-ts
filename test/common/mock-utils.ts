@@ -7,6 +7,7 @@ import { Utility } from "../../src/utility/utility";
 import { IAuthorizer } from "nodets-ms-core/lib/core/auth/abstracts/IAuthorizer";
 import { IAuthConfig } from "nodets-ms-core/lib/core/auth/abstracts/IAuthConfig";
 import { PermissionRequest } from "nodets-ms-core/lib/core/auth/model/permission_request";
+import { NextFunction, Request, Response } from "express";
 
 export function getMockFileEntity() {
     const fileEntity: FileEntity = {
@@ -66,6 +67,20 @@ export function getMockTopic() {
     return mockTopic;
 }
 
+export function getMockAuthorizer(result:boolean) {
+    const authorizor: IAuthorizer = {
+        hasPermission(permissionRequest) {
+            return Promise.resolve(result);
+        },
+    }
+    return authorizor;
+}
+
+export function mockCoreAuth(result:boolean){
+    jest.spyOn(Core,'getAuthorizer').mockImplementation(()=> {return getMockAuthorizer(result);})
+
+}
+
 export function getAuthorizer(mockAuthResponse: boolean): any {
     const authorizer = Core.getAuthorizer({ provider: "Simulated" });
 
@@ -78,7 +93,7 @@ export function getAuthorizer(mockAuthResponse: boolean): any {
 
 export function mockCore(mockStorage: boolean = true, mockTopic: boolean = true,
     mockAuthResponse: boolean = true) {
-    jest.spyOn(Core, "initialize");
+    jest.spyOn(Core, "initialize").mockImplementation();
     if (mockStorage) jest.spyOn(Core, "getStorageClient").mockImplementation(() => { return getMockStorageClient(); });
     if (mockTopic) jest.spyOn(Core, "getTopic").mockImplementation(() => { return getMockTopic(); });
     jest.spyOn(Core, "getAuthorizer").mockImplementation((config: Partial<IAuthConfig>) => {
@@ -105,5 +120,33 @@ export function mockQueueMessageContent(permissionResolve = true) {
 
 export function mockUtility() {
     jest.spyOn(Utility, "generateSecret")
-        .mockResolvedValueOnce("secretr_token");
+        .mockResolvedValueOnce("secret_token");
+}
+
+export function mockMulter() {
+    jest.mock('multer', ()=>{
+        const multer = () =>({
+            any:() =>{
+                return (req:Request,res:Response,next:NextFunction)=>{
+                    req.body.user_id ='sample-user';
+                    req.file = {
+                        originalname:'sample.zip',
+                        mimetype:'application/zip',
+                        path:'sample/path/to.zip',
+                        buffer:Buffer.from('sample-buffer'),
+                        fieldname:'file',
+                        filename:'sample.zip',
+                        size:100,
+                        stream:Readable.from(''),
+                        encoding:'',
+                        destination:''
+                    }
+
+                    return next()
+                }
+            }
+        })
+        multer.memoryStorage = () => jest.fn()
+        return multer
+    })
 }
