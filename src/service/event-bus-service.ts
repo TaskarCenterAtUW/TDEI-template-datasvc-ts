@@ -74,22 +74,13 @@ export class EventBusService implements IEventBusServiceInterface {
                         });
                     return Promise.resolve();
                 } else {
-                    gtfsPathwaysService.createGtfsPathway(pathwayVersions).then(() => {
-                        this.publish(messageReceived,
-                            {
-                                success: true,
-                                message: 'GTFS Pathways request processed successfully !'
-                            });
-                        return Promise.resolve();
-                    }).catch(async (error: any) => {
-                        console.error('Error saving the pathways version', error);
-                        await this.publish(messageReceived,
-                            {
-                                success: false,
-                                message: 'Error occured while processing pathways request : ' + error.message
-                            });
-                        return Promise.resolve();
-                    });
+                    // New format does not have to store the information. Just publish the message.
+                    this.publish(messageReceived,
+                        {
+                            success: true,
+                            message: 'GTFS Pathways request processed successfully !'
+                        });
+                    return Promise.resolve();
                 }
             });
         } catch (error) {

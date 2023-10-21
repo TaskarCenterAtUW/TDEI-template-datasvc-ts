@@ -1,5 +1,5 @@
 
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import bodyParser from "body-parser";
 import { IController } from "./controller/interface/IController";
 import helmet from "helmet";
@@ -9,6 +9,7 @@ import cors from "cors";
 import { unhandledExceptionAndRejectionHandler } from "./middleware/unhandled-exception-rejection-handler";
 import { errorHandler } from "./middleware/error-handler-middleware";
 import pathwaysDbClient from "./database/pathways-data-source";
+import HttpException from "./exceptions/http/http-base-exception";
 
 class App {
     public app: express.Application;
@@ -28,7 +29,19 @@ class App {
         pathwaysDbClient.initializaDatabase();
 
         //Last middleware to be registered: error handler. 
-        this.app.use(errorHandler);
+        // this.app.use(errorHandler); // Not working here.
+        
+        // Exception handling
+        this.app.use((err: any,req: Request, res: Response, next: NextFunction)=>{
+            console.log(err)
+            if (err instanceof HttpException) {
+                res.status(err.status).send(err.message);
+            }
+            else {
+                res.status(500).send('Something went wrong');
+            }
+        })
+
     }
 
     initializeLibraries() {

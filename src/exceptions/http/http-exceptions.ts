@@ -12,6 +12,13 @@ export class OverlapException extends HttpException {
     }
 }
 
+export class StationNotFoundException extends HttpException {
+    constructor(stationId:string){
+        super(404,`Station with ID ${stationId} not found or inactive for the org.`)
+    }
+}
+
+
 export class UnAuthenticated extends HttpException {
     constructor() {
         super(401, `User not authenticated/authorized to perform this action.`);
