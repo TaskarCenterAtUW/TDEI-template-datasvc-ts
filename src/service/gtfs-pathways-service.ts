@@ -116,7 +116,7 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
             return StationDto.from(data.pop());
         } catch (error: any) {
             console.error(error);
-            throw new Error("Station id not found or inactive.");
+            throw new StationNotFoundException(stationId);
         }
     }
 }
