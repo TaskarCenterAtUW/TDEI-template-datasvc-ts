@@ -9,7 +9,7 @@ export class GtfsPathwaysUploadModel extends AbstractDomainEntity {
     @Prop()
     tdei_record_id!: string;
     @Prop()
-    tdei_org_id!: string;
+    tdei_project_group_id!: string;
     @Prop()
     tdei_station_id!: string;
     @Prop()

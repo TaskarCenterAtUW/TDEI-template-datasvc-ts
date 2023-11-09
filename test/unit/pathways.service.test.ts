@@ -26,7 +26,7 @@ describe("Pathways Service Test", () => {
                         pathwaysObj
                     ]
                 };
-                    jest
+                jest
                     .spyOn(pathwaysDbClient, "query")
                     .mockResolvedValueOnce(dummyResponse);
                 const params: PathwaysQueryParams = new PathwaysQueryParams();
@@ -46,16 +46,16 @@ describe("Pathways Service Test", () => {
                         pathwaysObj
                     ]
                 };
-                 jest
+                jest
                     .spyOn(pathwaysDbClient, "query")
                     .mockResolvedValueOnce(dummyResponse);
                 const params: PathwaysQueryParams = new PathwaysQueryParams();
                 params.page_no = 1;
                 params.page_size = 10;
                 params.date_time = "03-03-2023";
-                params.tdei_org_id = "test_id";
+                params.tdei_project_group_id = "test_id";
                 params.tdei_record_id = "test_id";
-                params.tdei_org_id = "test_id";
+                params.tdei_project_group_id = "test_id";
                 params.pathways_schema_version = "v1.0";
                 params.bbox = [1, 2, 3, 4]
                 //Act
@@ -71,9 +71,8 @@ describe("Pathways Service Test", () => {
                 params.page_no = 1;
                 params.page_size = 10;
                 params.date_time = "13-13-2023";
-                params.tdei_org_id = "test_id";
+                params.tdei_project_group_id = "test_id";
                 params.tdei_record_id = "test_id";
-                params.tdei_org_id = "test_id";
                 params.pathways_schema_version = "v1.0";
                 params.bbox = [1, 2, 3, 4]
                 //Act
@@ -87,9 +86,9 @@ describe("Pathways Service Test", () => {
                 params.page_no = 1;
                 params.page_size = 10;
                 params.date_time = "03-03-2023";
-                params.tdei_org_id = "test_id";
+                params.tdei_project_group_id = "test_id";
                 params.tdei_record_id = "test_id";
-                params.tdei_org_id = "test_id";
+                params.tdei_project_group_id = "test_id";
                 params.pathways_schema_version = "v1.0";
                 params.bbox = [1, 2]
                 //Act
@@ -189,7 +188,7 @@ describe("Pathways Service Test", () => {
                 expect(result instanceof GtfsPathwaysDTO);
             });
 
-            test("When database exception with duplicate tdei_org_id occured while processing request, Expect to throw DuplicateException", async () => {
+            test("When database exception with duplicate tdei_project_group_id occured while processing request, Expect to throw DuplicateException", async () => {
                 //Arrange
                 const pathwaysObj = PathwayVersions.from(TdeiObjectFaker.getGtfsPathwaysVersion());
 
@@ -242,7 +241,7 @@ describe("Pathways Service Test", () => {
                 }));
                 mockUtility();
                 //Act
-                const result = await pathwaysStation.getStationById("test_station_id", "test_org_id");
+                const result = await pathwaysStation.getStationById("test_station_id", "test_project_group_id");
                 //Assert
                 expect(result instanceof StationDto);
             });
@@ -256,7 +255,7 @@ describe("Pathways Service Test", () => {
                 mockUtility();
                 //Act
                 //Assert
-                await expect(pathwaysStation.getStationById("test_station_id", "test_org_id")).rejects.toThrowError();
+                await expect(pathwaysStation.getStationById("test_station_id", "test_project_group_id")).rejects.toThrowError();
             });
 
             test("When requested invalid station id, Expect to throw error", async () => {
@@ -268,7 +267,7 @@ describe("Pathways Service Test", () => {
                 mockUtility();
                 //Act
                 //Assert
-                await expect(pathwaysStation.getStationById("test_station_id", "test_org_id")).rejects.toThrowError();
+                await expect(pathwaysStation.getStationById("test_station_id", "test_project_group_id")).rejects.toThrowError();
             });
 
             test("When external service get call fails with 400 HTTP status, Expect to throw error", async () => {
@@ -280,7 +279,7 @@ describe("Pathways Service Test", () => {
                 mockUtility();
                 //Act
                 //Assert
-                await expect(pathwaysStation.getStationById("test_station_id", "test_org_id")).rejects.toThrowError();
+                await expect(pathwaysStation.getStationById("test_station_id", "test_project_group_id")).rejects.toThrowError();
             });
         });
     });
