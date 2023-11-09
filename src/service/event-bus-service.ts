@@ -139,7 +139,7 @@ export class EventBusService implements IEventBusServiceInterface {
              stage:'pathways-upload',
              request:request,
              userId:userId,
-             orgId:request.tdei_project_group_id,
+             projectGroupId:request.tdei_project_group_id,
              tdeiRecordId:recordId,
              meta:{
                  'file_upload_path':file_upload_path,

@@ -21,10 +21,10 @@ export interface IGtfsPathwaysService {
      */
     createGtfsPathway(pathwayInfo: PathwayVersions): Promise<GtfsPathwaysDTO>;
     /**
-         * Gets the station details for given orgid and stationid
+         * Gets the station details for given projectGroupId and stationid
          * @param stationId station id uniquely represented by TDEI system
-         * @param orgId oraganization id uniquely represented by TDEI system
+         * @param projectGroupId oraganization id uniquely represented by TDEI system
          * @returns 
          */
-    getStationById(stationId: string, orgId: string): Promise<StationDto>;
+    getStationById(stationId: string, projectGroupId: string): Promise<StationDto>;
 }

@@ -14,16 +14,16 @@ class StorageService {
 
     /**
      * Generates the folder path for the given record
-     * @param orgId ID of the project group
+     * @param projectGroupId ID of the project group
      * @param recordId ID of the record
      * @returns string with path
      */
-    getFolderPath(tdeiOrgId:string, recordId:string):string {
+    getFolderPath(tdeiProjectGroupId:string, recordId:string):string {
         const today = new Date();
         const year = today.getFullYear();
         const month = today.getMonth()+1;
         
-        return year+'/'+month+'/'+tdeiOrgId+'/'+recordId;
+        return year+'/'+month+'/'+tdeiProjectGroupId+'/'+recordId;
     }
 
     /**

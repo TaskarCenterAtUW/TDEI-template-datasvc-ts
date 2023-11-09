@@ -12,11 +12,11 @@ describe("Storage service test", ()=>{
     })
     describe('Get folder path', ()=>{
         test('When requested with recordId, expect to receive folder path', ()=>{
-            const folderPath = storageService.getFolderPath('tdeiOrgId','recordId');
+            const folderPath = storageService.getFolderPath('tdeiProjectGroupId','recordId');
             console.log(folderPath);
             expect(folderPath).toBeTruthy();
             expect(folderPath).toContain('/');
-            expect(folderPath).toContain('tdeiOrgId');
+            expect(folderPath).toContain('tdeiProjectGroupId');
             expect(folderPath).toContain('recordId');
         })
     })

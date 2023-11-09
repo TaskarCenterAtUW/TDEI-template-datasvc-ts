@@ -14,7 +14,7 @@ export class OverlapException extends HttpException {
 
 export class StationNotFoundException extends HttpException {
     constructor(stationId:string){
-        super(404,`Station with ID ${stationId} not found or inactive for the org.`)
+        super(404,`Station with ID ${stationId} not found or inactive for the project group.`)
     }
 }
 

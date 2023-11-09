@@ -27,7 +27,7 @@ export class TdeiObjectFaker {
     static getGtfsPathwaysPayload(){
         return {
             polygon: this.getPolygon(),
-            tdei_project_group_id: 'tdei-org-id',
+            tdei_project_group_id: 'tdei-projectGroup-id',
             tdei_station_id:'tdei-station-id',
             collected_by:'collectedby',
             collection_method:'manual',

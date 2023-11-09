@@ -242,7 +242,7 @@ describe("Pathways Service Test", () => {
                 }));
                 mockUtility();
                 //Act
-                const result = await pathwaysStation.getStationById("test_station_id", "test_org_id");
+                const result = await pathwaysStation.getStationById("test_station_id", "test_projectGroup_id");
                 //Assert
                 expect(result instanceof StationDto);
             });
@@ -256,7 +256,7 @@ describe("Pathways Service Test", () => {
                 mockUtility();
                 //Act
                 //Assert
-                await expect(pathwaysStation.getStationById("test_station_id", "test_org_id")).rejects.toThrowError();
+                await expect(pathwaysStation.getStationById("test_station_id", "test_projectGroup_id")).rejects.toThrowError();
             });
 
             test("When requested invalid station id, Expect to throw error", async () => {
@@ -268,7 +268,7 @@ describe("Pathways Service Test", () => {
                 mockUtility();
                 //Act
                 //Assert
-                await expect(pathwaysStation.getStationById("test_station_id", "test_org_id")).rejects.toThrowError();
+                await expect(pathwaysStation.getStationById("test_station_id", "test_projectGroup_id")).rejects.toThrowError();
             });
 
             test("When external service get call fails with 400 HTTP status, Expect to throw error", async () => {
@@ -280,7 +280,7 @@ describe("Pathways Service Test", () => {
                 mockUtility();
                 //Act
                 //Assert
-                await expect(pathwaysStation.getStationById("test_station_id", "test_org_id")).rejects.toThrowError();
+                await expect(pathwaysStation.getStationById("test_station_id", "test_projectGroup_id")).rejects.toThrowError();
             });
         });
     });
