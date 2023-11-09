@@ -147,7 +147,7 @@ export class EventBusService implements IEventBusServiceInterface {
              },
              response:{
                  success:true,
-                 message:'File uploaded for the organization: '+request.tdei_project_group_id+' with record id'+recordId
+                 message:'File uploaded for the project group: '+request.tdei_project_group_id+' with record id'+recordId
              }
          });
          const message = QueueMessage.from(

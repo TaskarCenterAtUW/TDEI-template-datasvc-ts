@@ -14,7 +14,7 @@ class StorageService {
 
     /**
      * Generates the folder path for the given record
-     * @param orgId ID of the organization
+     * @param orgId ID of the project group
      * @param recordId ID of the record
      * @returns string with path
      */
