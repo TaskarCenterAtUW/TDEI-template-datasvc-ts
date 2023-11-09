@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS public.pathways_versions
     id integer NOT NULL DEFAULT nextval('pathways_versions_id_seq'::regclass),
     tdei_record_id character varying COLLATE pg_catalog."default" NOT NULL,
     confidence_level integer DEFAULT 0,
-    tdei_org_id character varying COLLATE pg_catalog."default" NOT NULL,
+    tdei_project_group_id character varying COLLATE pg_catalog."default" NOT NULL,
     tdei_service_id character varying COLLATE pg_catalog."default" NOT NULL,
     file_upload_path character varying COLLATE pg_catalog."default" NOT NULL,
     uploaded_by character varying COLLATE pg_catalog."default" NOT NULL,

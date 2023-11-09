@@ -138,7 +138,7 @@ class GtfsPathwaysController implements IController {
             }
             // Generate the files and upload them
             const uid = storageService.generateRandomUUID(); // Fetches a random UUID for the record
-            const folderPath = storageService.getFolderPath(gtfsdto.tdei_org_id,uid);
+            const folderPath = storageService.getFolderPath(gtfsdto.tdei_project_group_id,uid);
             const uploadedFile = request.file;
             const uploadPath = path.join(folderPath,uploadedFile!.originalname)
             const remoteUrl = await storageService.uploadFile(uploadPath,'application/zip',Readable.from(uploadedFile!.buffer))

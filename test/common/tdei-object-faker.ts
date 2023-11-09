@@ -10,7 +10,7 @@ export class TdeiObjectFaker {
             polygon: this.getPolygon(),
             tdei_record_id: "test_record_id",
             confidence_level: 0,
-            tdei_org_id: "test_user",
+            tdei_project_group_id: "test_user",
             file_upload_path: "test_path",
             uploaded_by: "test",
             collected_by: "test",
@@ -27,7 +27,7 @@ export class TdeiObjectFaker {
     static getGtfsPathwaysPayload(){
         return {
             polygon: this.getPolygon(),
-            tdei_org_id: 'tdei-org-id',
+            tdei_project_group_id: 'tdei-org-id',
             tdei_station_id:'tdei-station-id',
             collected_by:'collectedby',
             collection_method:'manual',
@@ -46,7 +46,7 @@ export class TdeiObjectFaker {
             polygon2: JSON.stringify(this.getPolygonGeometry()),
             tdei_record_id: "test_record_id",
             confidence_level: 0,
-            tdei_org_id: "test_user",
+            tdei_project_group_id: "test_user",
             file_upload_path: "test_path",
             uploaded_by: "test",
             collected_by: "test",
@@ -132,7 +132,7 @@ export class TdeiObjectFaker {
 
     static getGtfsPathwaysPayload2(){
         return {
-            "tdei_org_id": "e1956869-02d9-4e14-8391-6024406ced41",
+            "tdei_project_group_id": "e1956869-02d9-4e14-8391-6024406ced41",
             "tdei_station_id": "a73d0a95-f9e2-4067-b4c9-a1f82419e82e",
             "collected_by": "testuser",
             "collection_date": "2023-03-02T04:22:42.493Z",

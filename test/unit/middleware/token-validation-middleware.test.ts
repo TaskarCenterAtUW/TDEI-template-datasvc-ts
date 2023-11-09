@@ -43,7 +43,7 @@ describe('Token validation middleware', () => {
     test('When a valid token is present, expect to return with user_id in body', async ()=>{
         const testUserId = 'test-user-id';
         const token = jwt.sign('{"sub":"test-user-id"}','secret-key')
-        const req = getMockReq({ headers: { 'authorization': token },body:{'meta':'{"tdei_org_id":"sample-org"}'} })
+        const req = getMockReq({ headers: { 'authorization': token },body:{'meta':'{"tdei_project_group_id":"sample-org"}'} })
         const { res, next } = getMockRes()
         mockCoreAuth(true);
         await tokenValidator(req, res, next)
@@ -56,7 +56,7 @@ describe('Token validation middleware', () => {
 
         const testUserId = 'test-user-id';
         const token = jwt.sign('{"sub":"test-user-id"}','secret-key')
-        const req = getMockReq({ headers: { 'authorization': token },body:{'meta':'{"tdei_org_id":"sample-org"}'} })
+        const req = getMockReq({ headers: { 'authorization': token },body:{'meta':'{"tdei_project_group_id":"sample-org"}'} })
         const { res, next } = getMockRes()
         mockCoreAuth(false);
         await tokenValidator(req, res, next)

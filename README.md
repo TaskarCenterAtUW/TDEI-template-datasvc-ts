@@ -177,7 +177,7 @@ Example for meta
 ```json
 
   {
-  "tdei_org_id": "4e991e7a-5c16-4ebf-ad31-3a3625bcca10",
+  "tdei_project_group_id": "4e991e7a-5c16-4ebf-ad31-3a3625bcca10",
   "tdei_station_id": "5e991e7a-5c16-4ebf-ad31-3a3625bcca10",
   "collected_by": "See best practices document",
   "collection_date": "2023-02-10T09:30Z",

@@ -110,7 +110,7 @@ export function mockQueueMessageContent(permissionResolve = true) {
             //This is due to not able to mock Prop() behaviour 
             test.tdeiRecordId = json.tdei_record_id;
             test.userId = json.user_id;
-            test.orgId = json.tdei_org_id;
+            test.orgId = json.tdei_project_group_id;
             test.hasPermission = jest.fn().mockImplementation(() => {
                 return Promise.resolve(permissionResolve);
             });

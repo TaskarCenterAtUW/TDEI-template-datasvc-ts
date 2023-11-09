@@ -139,7 +139,7 @@ export class EventBusService implements IEventBusServiceInterface {
              stage:'pathways-upload',
              request:request,
              userId:userId,
-             orgId:request.tdei_org_id,
+             orgId:request.tdei_project_group_id,
              tdeiRecordId:recordId,
              meta:{
                  'file_upload_path':file_upload_path,
@@ -147,7 +147,7 @@ export class EventBusService implements IEventBusServiceInterface {
              },
              response:{
                  success:true,
-                 message:'File uploaded for the organization: '+request.tdei_org_id+' with record id'+recordId
+                 message:'File uploaded for the organization: '+request.tdei_project_group_id+' with record id'+recordId
              }
          });
          const message = QueueMessage.from(

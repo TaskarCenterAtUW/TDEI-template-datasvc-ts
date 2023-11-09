@@ -74,7 +74,7 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
             pathwayInfo.file_upload_path = pathwayInfo.file_upload_path ? decodeURIComponent(pathwayInfo.file_upload_path) : "";
 
             //Validate station_id 
-            const station = await this.getStationById(pathwayInfo.tdei_station_id, pathwayInfo.tdei_org_id);
+            const station = await this.getStationById(pathwayInfo.tdei_station_id, pathwayInfo.tdei_project_group_id);
             if (!station) throw new StationNotFoundException(pathwayInfo.tdei_station_id);
 
             const queryResult = await pathwaysDbClient.query(pathwayInfo.getOverlapQuery());
@@ -100,7 +100,7 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
     async getStationById(stationId: string, orgId: string): Promise<StationDto> {
         try {
             const secretToken = await Utility.generateSecret();
-            const result = await fetch(`${environment.stationUrl}?tdei_station_id=${stationId}&tdei_org_id=${orgId}&page_no=1&page_size=1`, {
+            const result = await fetch(`${environment.stationUrl}?tdei_station_id=${stationId}&tdei_project_group_id=${orgId}&page_no=1&page_size=1`, {
                 method: 'get',
                 headers: { 'Content-Type': 'application/json', 'x-secret': secretToken }
             });

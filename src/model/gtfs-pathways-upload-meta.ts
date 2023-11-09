@@ -22,7 +22,7 @@ export class GtfsPathwaysUploadMeta extends AbstractDomainEntity{
 
     @Prop()
     @IsNotEmpty()
-    tdei_org_id!:string;
+    tdei_project_group_id!:string;
 
     @Prop()
     @IsNotEmpty()

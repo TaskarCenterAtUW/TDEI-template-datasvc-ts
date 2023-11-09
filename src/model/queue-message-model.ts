@@ -15,7 +15,7 @@ export class QueueMessageContent extends AbstractDomainEntity {
     @IsNotEmpty()
     userId!: string;
     @IsNotEmpty()
-    @Prop("tdei_org_id")
+    @Prop("tdei_project_group_id")
     orgId!: string;
     @Prop()
     @IsNotEmpty()

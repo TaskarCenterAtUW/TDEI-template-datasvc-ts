@@ -42,7 +42,7 @@ export async function tokenValidator(req: Request, res: Response, next: NextFunc
         const user_id = jwtOutput?.sub;
 
         const meta = JSON.parse(req.body['meta']);
-        const orgId = meta['tdei_org_id'];
+        const orgId = meta['tdei_project_group_id'];
         // Also check for the authorization of the user 
         // Needs to be authorized with tdeiOrgId, and should have any 
         // of the `pathways_data_generator`, `poc`, `tdei_admin` 
