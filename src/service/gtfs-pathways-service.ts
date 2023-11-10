@@ -78,7 +78,7 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
             if (!station) throw new StationNotFoundException(pathwayInfo.tdei_station_id);
 
             const queryResult = await pathwaysDbClient.query(pathwayInfo.getOverlapQuery());
-            if (queryResult.rowCount > 0) {
+            if (queryResult.rowCount != null && queryResult.rowCount > 0) {
                 const recordId = queryResult.rows[0]["tdei_record_id"];
                 throw new OverlapException(recordId);
             }
