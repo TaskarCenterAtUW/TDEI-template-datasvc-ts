@@ -131,34 +131,34 @@ export class EventBusService implements IEventBusServiceInterface {
             });
     }
 
-     /**
-     * Publishes the upload of a gtfs-pathways file
-     */
-     public publishUpload(request:GtfsPathwaysUploadMeta, recordId:string,file_upload_path:string, userId:string, meta_file_path:string){
-        const messageContent =  QueueMessageContent.from({
-             stage:'pathways-upload',
-             request:request,
-             userId:userId,
-             orgId:request.tdei_org_id,
-             tdeiRecordId:recordId,
-             meta:{
-                 'file_upload_path':file_upload_path,
-                 'meta_file_path':meta_file_path
-             },
-             response:{
-                 success:true,
-                 message:'File uploaded for the organization: '+request.tdei_org_id+' with record id'+recordId
-             }
-         });
-         const message = QueueMessage.from(
-             {
-                 messageType:'gtfs-pathways-upload',
-                 data:messageContent,
- 
-             }
-         )
-         this.uploadTopic.publish(message);
-     }
+    /**
+    * Publishes the upload of a gtfs-pathways file
+    */
+    public publishUpload(request: GtfsPathwaysUploadMeta, recordId: string, file_upload_path: string, userId: string, meta_file_path: string) {
+        const messageContent = QueueMessageContent.from({
+            stage: 'pathways-upload',
+            request: request,
+            userId: userId,
+            projectGroupId: request.tdei_project_group_id,
+            tdeiRecordId: recordId,
+            meta: {
+                'file_upload_path': file_upload_path,
+                'meta_file_path': meta_file_path
+            },
+            response: {
+                success: true,
+                message: 'File uploaded for the project group: ' + request.tdei_project_group_id + ' with record id' + recordId
+            }
+        });
+        const message = QueueMessage.from(
+            {
+                messageType: 'gtfs-pathways-upload',
+                data: messageContent,
+
+            }
+        )
+        this.uploadTopic.publish(message);
+    }
 
 
 }

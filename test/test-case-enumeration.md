@@ -57,10 +57,10 @@ describe("{{Component}}", () => {
 | Controller | Get Pathways file by Id | Functional| When unexpected error occured while processing request | Expect to return HTTP status 500 |:white_check_mark:|
 | Controller | Create Pathways version | Functional| When valid input provided | Expect to return tdei_record_id for new record |:white_check_mark:|
 | Controller | Create Pathways version | Functional| When provided null body | Expect to return HTTP status 500 |:white_check_mark:|
-| Controller | Create Pathways version | Functional| When provided body with empty tdei_org_id | Expect to return HTTP status 400|:white_check_mark:|
+| Controller | Create Pathways version | Functional| When provided body with empty tdei_project_group_id | Expect to return HTTP status 400|:white_check_mark:|
 | Controller | Create Pathways version | Functional| When provided body with invalid polygon | Expect to return HTTP status 400|:white_check_mark:|
 | Controller | Create Pathways version | Functional| When database exception occured while processing request | Expect to return HTTP status 500|:white_check_mark:|
-| Controller | Create Pathways version | Functional| When database exception with duplicate tdei_org_id occured while processing request | Expect to return HTTP status 400|:white_check_mark:|
+| Controller | Create Pathways version | Functional| When database exception with duplicate tdei_project_group_id occured while processing request | Expect to return HTTP status 400|:white_check_mark:|
 |--|--|--|--|--|--|
 | Pathways Service | Get all Pathways | Functional| When requested with empty search filters | Expect to return pathways list |:white_check_mark:|
 | Pathways Service | Get all Pathways | Functional| When requested with all search filters| Expect to return pathways list |:white_check_mark:|
@@ -70,7 +70,7 @@ describe("{{Component}}", () => {
 | Pathways Service | Get Pathways version by Id | Functional| When requested for get Pathways version with invalid tdei_record_id| Expect to throw HttpException |:white_check_mark:|
 | Pathways Service | Get Pathways version by Id | Functional| When Core failed obtaing storage client| Expect to throw error |:white_check_mark:|
 | Pathways Service | Create Pathways version | Functional| When requested for creating Pathways version with valid input| Expect to return GtfsPathwaysDTO object |:white_check_mark:|
-| Pathways Service | Create Pathways version | Functional| When database exception with duplicate tdei_org_id occured while processing request| Expect to throw DuplicateException |:white_check_mark:|
+| Pathways Service | Create Pathways version | Functional| When database exception with duplicate tdei_project_group_id occured while processing request| Expect to throw DuplicateException |:white_check_mark:|
 | Pathways Service | Create Pathways version | Functional| When database exception occured while processing request| Expect to throw error |:white_check_mark:|
 | Pathways Service | Get Station Id | Functional| When requested| Expect to return service details |:white_check_mark:|
 | Pathways Service | Get Station Id | Functional| When external service get call fails unexpected| Expect to throw error |:white_check_mark:|

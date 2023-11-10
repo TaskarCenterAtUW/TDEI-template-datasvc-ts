@@ -9,7 +9,7 @@ export class PathwaysQueryParams {
     @IsOptional()
     date_time: string | undefined;
     @IsOptional()
-    tdei_org_id: string | undefined;
+    tdei_project_group_id: string | undefined;
     @IsOptional()
     tdei_record_id: string | undefined;
     @IsOptional()
@@ -42,8 +42,8 @@ export class PathwaysQueryParams {
         //Add conditions
         if (this.pathways_schema_version)
             queryObject.condition(` pathways_schema_version = $${queryObject.paramCouter++} `, this.pathways_schema_version);
-        if (this.tdei_org_id)
-            queryObject.condition(` tdei_org_id = $${queryObject.paramCouter++} `, this.tdei_org_id);
+        if (this.tdei_project_group_id)
+            queryObject.condition(` tdei_project_group_id = $${queryObject.paramCouter++} `, this.tdei_project_group_id);
         if (this.tdei_record_id)
             queryObject.condition(` tdei_record_id = $${queryObject.paramCouter++} `, this.tdei_record_id);
         if (this.tdei_station_id)

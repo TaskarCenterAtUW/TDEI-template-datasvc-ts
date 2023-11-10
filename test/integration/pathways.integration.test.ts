@@ -109,7 +109,7 @@ describe("Pathways Integration Test", () => {
         //Arrange
         var permissionRequest = new PermissionRequest({
             userId: "test_userId",
-            orgId: "test_orgId",
+            projectGroupId: "test_projectGroupId",
             permssions: ["tdei-admin", "poc", "pathways_data_generator"],
             shouldSatisfyAll: false
         });
@@ -155,7 +155,7 @@ describe("Pathways Integration Test", () => {
         //Arrange
         let secretToken = await Utility.generateSecret();
         //Act
-        const result = await fetch(`${environment.stationUrl}?tdei_station_id=test-stationId&tdei_org_id=test-orgId&page_no=1&page_size=1`, {
+        const result = await fetch(`${environment.stationUrl}?tdei_station_id=test-stationId&tdei_project_group_id=test-projectGroupId&page_no=1&page_size=1`, {
             method: 'get',
             headers: { 'Content-Type': 'application/json', 'x-secret': secretToken }
         });

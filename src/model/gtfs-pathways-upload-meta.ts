@@ -5,11 +5,11 @@ import { Readable } from "stream";
 import { IsValidPolygon } from "../validators/polygon-validator";
 
 
-export class GtfsPathwaysUploadMeta extends AbstractDomainEntity{
+export class GtfsPathwaysUploadMeta extends AbstractDomainEntity {
 
     @Prop()
     @IsNotEmpty()
-    collected_by!:string;
+    collected_by!: string;
 
     @Prop()
     @IsISO8601()
@@ -18,38 +18,38 @@ export class GtfsPathwaysUploadMeta extends AbstractDomainEntity{
 
     @Prop()
     @IsNotEmpty()
-    tdei_station_id!:string;
+    tdei_station_id!: string;
 
     @Prop()
     @IsNotEmpty()
-    tdei_org_id!:string;
+    tdei_project_group_id!: string;
 
     @Prop()
     @IsNotEmpty()
-    @IsIn(['manual','transform','generated','others'])
-    collection_method!:string;
+    @IsIn(['manual', 'transform', 'generated', 'others'])
+    collection_method!: string;
 
     @Prop()
     @IsNotEmpty()
     @IsIn(['3rdParty', 'TDEITools', 'InHouse'])
-    data_source!:string;
+    data_source!: string;
 
     @Prop()
     @IsValidPolygon()
-    polygon!:FeatureCollection ;
+    polygon!: FeatureCollection;
 
     @Prop()
-    pathways_schema_version!:string;
-
-    @Prop()
-    @IsISO8601()
-    @IsNotEmpty()
-    valid_to!:Date;
+    pathways_schema_version!: string;
 
     @Prop()
     @IsISO8601()
     @IsNotEmpty()
-    valid_from!:Date;
+    valid_to!: Date;
+
+    @Prop()
+    @IsISO8601()
+    @IsNotEmpty()
+    valid_from!: Date;
 
     /**
      * Returns the readable stream of the information
@@ -57,7 +57,7 @@ export class GtfsPathwaysUploadMeta extends AbstractDomainEntity{
      */
     getStream(): NodeJS.ReadableStream {
         const stringContent = JSON.stringify(this);
-        const buffer =  Buffer.from(stringContent)
+        const buffer = Buffer.from(stringContent)
         return Readable.from(buffer);
     }
 

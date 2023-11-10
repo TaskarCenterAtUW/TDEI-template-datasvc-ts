@@ -9,7 +9,7 @@ export class StationDto extends BaseDto {
     tdei_station_id = "0";
     @IsNotEmpty()
     @Prop()
-    tdei_org_id!: string;
+    tdei_project_group_id!: string;
     @IsNotEmpty()
     @Prop("station_name")
     station_name!: string;

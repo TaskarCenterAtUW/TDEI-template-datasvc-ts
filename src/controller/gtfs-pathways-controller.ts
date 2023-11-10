@@ -55,7 +55,7 @@ class GtfsPathwaysController implements IController {
     public intializeRoutes() {
         this.router.get(this.path, this.getAllGtfsPathway);
         this.router.get(`${this.path}/:id`, this.getGtfsPathwayById);
-        this.router.post(this.path, upload.single('file'), metajsonValidator,tokenValidator,this.createGtfsPathway);
+        this.router.post(this.path, upload.single('file'), metajsonValidator, tokenValidator, this.createGtfsPathway);
         this.router.get(`${this.path}/versions/info`, this.getVersions);
     }
 
@@ -129,8 +129,8 @@ class GtfsPathwaysController implements IController {
             const gtfsdto = GtfsPathwaysUploadMeta.from(meta);
             const result = await validate(gtfsdto);
             console.log('result', result);
-        
-            if(result.length != 0){
+
+            if (result.length != 0) {
                 console.log('Metadata validation failed');
                 console.log(result);
                 const message = result.map((error: ValidationError) => Object.values(<any>error.constraints)).join(', ');
@@ -138,13 +138,13 @@ class GtfsPathwaysController implements IController {
             }
             // Generate the files and upload them
             const uid = storageService.generateRandomUUID(); // Fetches a random UUID for the record
-            const folderPath = storageService.getFolderPath(gtfsdto.tdei_org_id,uid);
+            const folderPath = storageService.getFolderPath(gtfsdto.tdei_project_group_id, uid);
             const uploadedFile = request.file;
-            const uploadPath = path.join(folderPath,uploadedFile!.originalname)
-            const remoteUrl = await storageService.uploadFile(uploadPath,'application/zip',Readable.from(uploadedFile!.buffer))
+            const uploadPath = path.join(folderPath, uploadedFile!.originalname)
+            const remoteUrl = await storageService.uploadFile(uploadPath, 'application/zip', Readable.from(uploadedFile!.buffer))
             // Upload the meta file  
-            const metaFilePath = path.join(folderPath,'meta.json');
-            const metaUrl = await storageService.uploadFile(metaFilePath,'text/json',gtfsdto.getStream());
+            const metaFilePath = path.join(folderPath, 'meta.json');
+            const metaUrl = await storageService.uploadFile(metaFilePath, 'text/json', gtfsdto.getStream());
             // Insert into database
             const pathway = PathwayVersions.from(meta);
             pathway.tdei_record_id = uid;
@@ -153,7 +153,7 @@ class GtfsPathwaysController implements IController {
             const returnInfo = await gtfsPathwaysService.createGtfsPathway(pathway);
 
             // Publish to the topic
-            this.eventBusService.publishUpload(gtfsdto,uid,remoteUrl,userId,metaUrl);
+            this.eventBusService.publishUpload(gtfsdto, uid, remoteUrl, userId, metaUrl);
             // Also send the information to the queue
             console.log('Responding to request');
             return response.status(202).send(uid);
@@ -165,9 +165,9 @@ class GtfsPathwaysController implements IController {
             } else {
                 response.status(500).send('Error saving the pathways file');
             }
-        } 
+        }
     }
 }
-    
+
 const gtfsPathwaysController = new GtfsPathwaysController();
 export default gtfsPathwaysController;
