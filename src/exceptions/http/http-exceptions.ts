@@ -7,10 +7,17 @@ export class DuplicateException extends HttpException {
 }
 
 export class OverlapException extends HttpException {
-    constructor(name:string){
-        super(400,`Given record overlaps with tdeirecord ${name} in the system`);
+    constructor(name: string) {
+        super(400, `Given record overlaps with tdeirecord ${name} in the system`);
     }
 }
+
+export class StationNotFoundException extends HttpException {
+    constructor(stationId: string) {
+        super(404, `Station with ID ${stationId} not found or inactive for the project group.`)
+    }
+}
+
 
 export class UnAuthenticated extends HttpException {
     constructor() {
@@ -21,6 +28,12 @@ export class UnAuthenticated extends HttpException {
 export class ForeignKeyException extends HttpException {
     constructor(name: string) {
         super(400, `No reference found for the constraint '${name}' in the system.`);
+    }
+}
+
+export class FileTypeException extends HttpException {
+    constructor() {
+        super(400, 'Invalid file type.');
     }
 }
 

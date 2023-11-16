@@ -5,7 +5,7 @@ import pathwaysDbClient from "../database/pathways-data-source";
 import { PathwayVersions } from "../database/entity/pathways-version-entity";
 import UniqueKeyDbException from "../exceptions/db/database-exceptions";
 import HttpException from "../exceptions/http/http-base-exception";
-import { DuplicateException, OverlapException } from "../exceptions/http/http-exceptions";
+import { DuplicateException, OverlapException, StationNotFoundException } from "../exceptions/http/http-exceptions";
 import { GtfsPathwaysDTO } from "../model/gtfs-pathways-dto";
 import { PathwaysQueryParams } from "../model/gtfs-pathways-get-query-params";
 import { IGtfsPathwaysService } from "./interface/gtfs-pathways-service-interface";
@@ -16,26 +16,26 @@ import { Utility } from "../utility/utility";
 import { Geometry, Feature } from "geojson";
 
 class GtfsPathwaysService implements IGtfsPathwaysService {
-    constructor() { }
+    constructor() { /* TODO document why this constructor is empty */ }
 
     async getAllGtfsPathway(params: PathwaysQueryParams): Promise<GtfsPathwaysDTO[]> {
 
         //Builds the query object. All the query consitions can be build in getQueryObject()
-        let queryObject = params.getQueryObject();
+        const queryObject = params.getQueryObject();
 
-        let queryConfig = <QueryConfig>{
+        const queryConfig = <QueryConfig>{
             text: queryObject.getQuery(),
             values: queryObject.getValues()
         }
 
-        let result = await pathwaysDbClient.query(queryConfig);
+        const result = await pathwaysDbClient.query(queryConfig);
 
-        let list: GtfsPathwaysDTO[] = [];
+        const list: GtfsPathwaysDTO[] = [];
         result.rows.forEach(x => {
 
-            let pathway: GtfsPathwaysDTO = GtfsPathwaysDTO.from(x);
+            const pathway: GtfsPathwaysDTO = GtfsPathwaysDTO.from(x);
             if (pathway.polygon) {
-                var polygon = JSON.parse(x.polygon2) as Geometry;
+                const polygon = JSON.parse(x.polygon2) as Geometry;
                 pathway.polygon = {
                     type: "FeatureCollection",
                     features: [
@@ -59,31 +59,32 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
             values: [id],
         }
 
-        let result = await pathwaysDbClient.query(query);
+        const result = await pathwaysDbClient.query(query);
 
         if (result.rows.length == 0) throw new HttpException(404, "Record not found");
 
         const storageClient = Core.getStorageClient();
-        if (storageClient == null) throw console.error("Storage not configured");
-        let url: string = decodeURIComponent(result.rows[0].file_upload_path);
+        if (storageClient == null) throw new Error("Storage not configured");
+        const url: string = decodeURIComponent(result.rows[0].file_upload_path);
         return storageClient.getFileFromUrl(url);
     }
 
     async createGtfsPathway(pathwayInfo: PathwayVersions): Promise<GtfsPathwaysDTO> {
         try {
-            pathwayInfo.file_upload_path = decodeURIComponent(pathwayInfo.file_upload_path!);
+            pathwayInfo.file_upload_path = pathwayInfo.file_upload_path ? decodeURIComponent(pathwayInfo.file_upload_path) : "";
+
             //Validate station_id 
-            let station = await this.getStationById(pathwayInfo.tdei_station_id, pathwayInfo.tdei_org_id);
-            if (!station) throw new Error("Station id not found or inactive.");
+            const station = await this.getStationById(pathwayInfo.tdei_station_id, pathwayInfo.tdei_project_group_id);
+            if (!station) throw new StationNotFoundException(pathwayInfo.tdei_station_id);
 
             const queryResult = await pathwaysDbClient.query(pathwayInfo.getOverlapQuery());
-            if(queryResult.rowCount > 0){
+            if (queryResult.rowCount != null && queryResult.rowCount > 0) {
                 const recordId = queryResult.rows[0]["tdei_record_id"];
                 throw new OverlapException(recordId);
             }
             await pathwaysDbClient.query(pathwayInfo.getInsertQuery());
 
-            let pathway: GtfsPathwaysDTO = GtfsPathwaysDTO.from(pathwayInfo);
+            const pathway: GtfsPathwaysDTO = GtfsPathwaysDTO.from(pathwayInfo);
 
             console.log("New pathways version created sucessfully");
             return Promise.resolve(pathway);
@@ -96,10 +97,10 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
         }
     }
 
-    private async getStationById(stationId: string, orgId: string): Promise<StationDto> {
+    async getStationById(stationId: string, projectGroupId: string): Promise<StationDto> {
         try {
-            let secretToken = await Utility.generateSecret();
-            const result = await fetch(`${environment.stationUrl}?tdei_station_id=${stationId}&tdei_org_id=${orgId}&page_no=1&page_size=1`, {
+            const secretToken = await Utility.generateSecret();
+            const result = await fetch(`${environment.stationUrl}?tdei_station_id=${stationId}&tdei_project_group_id=${projectGroupId}&page_no=1&page_size=1`, {
                 method: 'get',
                 headers: { 'Content-Type': 'application/json', 'x-secret': secretToken }
             });
@@ -115,7 +116,7 @@ class GtfsPathwaysService implements IGtfsPathwaysService {
             return StationDto.from(data.pop());
         } catch (error: any) {
             console.error(error);
-            throw new Error("Station id not found or inactive.");
+            throw new StationNotFoundException(stationId);
         }
     }
 }

@@ -4,9 +4,15 @@ import { environment } from '../environment/environment';
 import UniqueKeyDbException, { ForeignKeyDbException } from '../exceptions/db/database-exceptions';
 
 class PathwaysDataSource {
-    private pool: Pool;
+    private pool: Pool = new Pool;
 
     constructor() {
+      // TODO document why this constructor is empty
+    
+    }
+
+
+    initializaDatabase() {
         console.info("Initializing Pathways database !");
         this.pool = new Pool({
             database: environment.postgres.pathways_database,
@@ -17,7 +23,7 @@ class PathwaysDataSource {
             port: environment.postgres.server_port
         });
 
-        this.pool.on('error', function (err: Error, _client: any) {
+        this.pool.on('error', function (err: Error) {
             console.log(`Pathways : Idle-Client Error:\n${err.message}\n${err.stack}`)
         }).on('connect', () => {
             console.log("Pathways Database initialized successfully !");

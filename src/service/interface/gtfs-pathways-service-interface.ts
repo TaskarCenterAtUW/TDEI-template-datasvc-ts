@@ -2,6 +2,7 @@ import { FileEntity } from "nodets-ms-core/lib/core/storage";
 import { PathwayVersions } from "../../database/entity/pathways-version-entity";
 import { GtfsPathwaysDTO } from "../../model/gtfs-pathways-dto";
 import { PathwaysQueryParams } from "../../model/gtfs-pathways-get-query-params";
+import { StationDto } from "../../model/station-dto";
 
 export interface IGtfsPathwaysService {
     /**
@@ -19,4 +20,11 @@ export interface IGtfsPathwaysService {
      * @param pathwayInfo GTFS Pathways object 
      */
     createGtfsPathway(pathwayInfo: PathwayVersions): Promise<GtfsPathwaysDTO>;
+    /**
+         * Gets the station details for given projectGroupId and stationid
+         * @param stationId station id uniquely represented by TDEI system
+         * @param projectGroupId oraganization id uniquely represented by TDEI system
+         * @returns 
+         */
+    getStationById(stationId: string, projectGroupId: string): Promise<StationDto>;
 }

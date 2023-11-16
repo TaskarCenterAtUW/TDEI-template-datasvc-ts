@@ -1,17 +1,20 @@
 
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import bodyParser from "body-parser";
 import { IController } from "./controller/interface/IController";
 import helmet from "helmet";
 import { Core } from "nodets-ms-core";
-import eventBusService from "./service/event-bus-service";
+import { EventBusService } from "./service/event-bus-service";
 import cors from "cors";
 import { unhandledExceptionAndRejectionHandler } from "./middleware/unhandled-exception-rejection-handler";
 import { errorHandler } from "./middleware/error-handler-middleware";
+import pathwaysDbClient from "./database/pathways-data-source";
+import HttpException from "./exceptions/http/http-base-exception";
 
 class App {
     public app: express.Application;
     public port: number;
+    private eventBusService!: EventBusService;
 
     constructor(controllers: IController[], port: number) {
         this.app = express();
@@ -23,9 +26,22 @@ class App {
         this.initializeControllers(controllers);
         this.subscribeUpload();
         this.initializeLibraries();
+        pathwaysDbClient.initializaDatabase();
 
         //Last middleware to be registered: error handler. 
-        this.app.use(errorHandler);
+        // this.app.use(errorHandler); // Not working here.
+        
+        // Exception handling
+        this.app.use((err: any,req: Request, res: Response, next: NextFunction)=>{
+            console.log(err)
+            if (err instanceof HttpException) {
+                res.status(err.status).send(err.message);
+            }
+            else {
+                res.status(500).send('Something went wrong');
+            }
+        })
+
     }
 
     initializeLibraries() {
@@ -33,7 +49,8 @@ class App {
     }
 
     private subscribeUpload() {
-        eventBusService.subscribeUpload();
+        this.eventBusService = new EventBusService();
+        this.eventBusService.subscribeUpload();
     }
 
     private initializeMiddlewares() {
